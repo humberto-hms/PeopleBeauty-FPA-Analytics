@@ -1,0 +1,88 @@
+{
+  "projeto": {
+    "nome": "People Beauty — FP&A Analytics",
+    "repositorio": "PeopleBeauty_FPA_Analytics_BI",
+    "url_repositorio": "https://github.com/humberto-hms/PeopleBeauty_FPA_Analytics_BI",
+    "versao_estrutura": "0.1.0",
+    "idioma": "pt-BR",
+    "status": "Estrutura inicial criada; banco e análises não iniciados"
+  },
+  "objetivo": "Portfólio de FP&A e Business Intelligence para analisar orçamento versus realizado, receita, CMV, margem bruta, despesas operacionais, rentabilidade por loja, forecast financeiro e DRE gerencial, com recomendações executivas.",
+  "empresa": {
+    "nome": "People Beauty",
+    "segmento": "Varejo de beleza e cuidados pessoais",
+    "ficticia": true,
+    "quantidade_lojas": 24,
+    "unidade_corporativa": {
+      "quantidade": 1,
+      "codigo_sugerido": "CORP",
+      "descricao": "Unidade administrativa central, responsável pelas despesas corporativas"
+    }
+  },
+  "dados": {
+    "natureza": "Fictícios",
+    "aviso": "Todos os dados financeiros e operacionais serão fictícios e criados apenas para estudo e demonstração.",
+    "periodo_referencia": {
+      "inicio": "2024-01",
+      "fim": "2026-12",
+      "granularidade": "Mensal"
+    },
+    "cenarios_previstos": ["Orçamento", "Realizado", "Forecast"],
+    "moeda": "BRL"
+  },
+  "escopo": [
+    "Orçamento versus realizado",
+    "Receita, CMV e margem bruta",
+    "Despesas operacionais",
+    "Rentabilidade por loja",
+    "Forecast financeiro",
+    "DRE gerencial",
+    "Recomendações executivas"
+  ],
+  "fora_do_escopo_desta_etapa": [
+    "Criação do banco de dados e das tabelas",
+    "Geração ou carga de dados fictícios",
+    "Consultas analíticas, views e medidas DAX",
+    "Dashboard Power BI e resultados"
+  ],
+  "tecnologias": ["SQL Server", "T-SQL", "Power BI", "DAX", "Excel", "Git", "GitHub", "Windows CMD"],
+  "estrutura_pastas": {
+    "01_Documentacao": "Escopo, premissas, dicionário de dados e decisões",
+    "02_SQL_Server": "Scripts de criação do banco, tabelas, chaves e carga",
+    "03_Dados": "Orientações sobre os dados fictícios de origem",
+    "04_Analises_SQL": "Consultas analíticas e views",
+    "05_Power_BI": "Modelo, medidas DAX e dashboard",
+    "06_Resultados": "Conclusões, prints e recomendações executivas"
+  },
+  "etapas": [
+    { "numero": 0, "nome": "Estrutura do repositório", "status": "Concluída" },
+    { "numero": 1, "nome": "Documentação e premissas", "status": "Planejada" },
+    { "numero": 2, "nome": "Modelagem no SQL Server", "status": "Planejada" },
+    { "numero": 3, "nome": "Dados fictícios e carga", "status": "Planejada" },
+    { "numero": 4, "nome": "Análises SQL", "status": "Planejada" },
+    { "numero": 5, "nome": "Power BI", "status": "Planejada" },
+    { "numero": 6, "nome": "Resultados e recomendações", "status": "Planejada" }
+  ],
+  "responsabilidades": {
+    "autor": {
+      "nome": "Humberto",
+      "github": "humberto-hms",
+      "atribuicoes": [
+        "Construir manualmente o banco de dados no SQL Server",
+        "Criar tabelas, chaves e relacionamentos",
+        "Preparar e carregar os dados fictícios",
+        "Escrever as consultas SQL e as views",
+        "Criar as medidas DAX e o dashboard Power BI",
+        "Redigir as conclusões e recomendações executivas"
+      ]
+    },
+    "assistente_ia": {
+      "atribuicoes": [
+        "Preparar a estrutura inicial do repositório",
+        "Redigir os arquivos de orientação (README, configuração e CMD)",
+        "Apoiar com trechos de código pontuais somente quando solicitado"
+      ]
+    },
+    "implementacao_manual": "A implementação do banco de dados e de todas as análises será feita manualmente pelo autor."
+  }
+}

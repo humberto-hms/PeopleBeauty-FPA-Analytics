@@ -1,0 +1,42 @@
+# --- Credenciais e configurações locais (nunca versionar) ---
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+secrets.*
+credenciais*
+*.udl
+*.dsn
+
+# --- SQL Server: arquivos de banco e backup ---
+*.mdf
+*.ldf
+*.ndf
+*.bak
+*.trn
+
+# --- Dados volumosos ---
+# Os dados fictícios podem ser versionados se forem pequenos.
+# Descomente as linhas abaixo se preferir manter os dados apenas localmente.
+# 03_Dados/**/*.csv
+# 03_Dados/**/*.xlsx
+
+# --- Power BI ---
+# O .pbix é versionado por padrão. Arquivos temporários e cache não.
+*.pbix.bak
+.pbi/
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+
+# --- Excel / Office: arquivos temporários ---
+~$*
+*.tmp
+
+# --- Sistema operacional e editores ---
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/
+*.log
