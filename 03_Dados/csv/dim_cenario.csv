@@ -1,4 +1,4 @@
 CodigoCenario;NomeCenario;TipoCenario;StatusCenario;Descricao
-REALIZADO;Realizado;REALIZADO;FECHADO;Realizado de jan/2024 a set/2026: fato_vendas_AAAA, fato_devolucoes e fato_despesas.
-ORCAMENTO_APROVADO;Orçamento Aprovado;ORCAMENTO;APROVADO;Orçamento anual aprovado de 2024, 2025 e 2026: fato_orcamento.
-FORECAST_2026_9P3;Forecast 9+3 2026;FORECAST;VIGENTE;Projeção de out-dez/2026 feita na data de corte (fato_forecast). Jan-set/2026 vem do realizado.
+REALIZADO;Realizado;REALIZADO;FECHADO;Realizado de jan/2024 a set/2026, três canais: fato_vendas_AAAA, fato_devolucoes e fato_despesas.
+ORCAMENTO_APROVADO;Orçamento Aprovado;ORCAMENTO;APROVADO;Orçamento anual aprovado de 2024, 2025 e 2026, por canal: fato_orcamento.
+FORECAST_2026_9P3;Forecast 9+3 2026;FORECAST;VIGENTE;Projeção de out-dez/2026 por canal, feita na data de corte (fato_forecast). Jan-set/2026 vem do realizado.

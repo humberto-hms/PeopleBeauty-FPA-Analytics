@@ -1,35 +1,43 @@
 Contagem de registros (sem cabeçalho):
   dim_calendario.csv                    1.096
+  dim_canal.csv                             3
   dim_categoria.csv                         5
   dim_cenario.csv                           3
-  dim_departamento.csv                      8
+  dim_departamento.csv                      9
   dim_loja.csv                             25
   dim_marca.csv                            21
-  dim_plano_contas.csv                     36
+  dim_plano_contas.csv                     40
   dim_produto.csv                          66
-  fato_despesas.csv                    12.432
-  fato_devolucoes.csv                  16.126
-  fato_forecast.csv                     1.464
-  fato_orcamento.csv                   16.938
-  fato_vendas_2024.csv                492.307
-  fato_vendas_2025.csv                527.882
-  fato_vendas_2026.csv                387.127
+  fato_despesas.csv                    12.895
+  fato_devolucoes.csv                  22.316
+  fato_forecast.csv                     1.542
+  fato_orcamento.csv                   17.681
+  fato_vendas_2024.csv                533.541
+  fato_vendas_2025.csv                589.870
+  fato_vendas_2026.csv                447.237
   parametros.csv                            4
-  TOTAL                             1.455.540
+  TOTAL                             1.626.354
 
-Formato e codificação:
-  [OK]   UTF-8 sem BOM, separador ';' e mesmo nº de colunas em todas as linhas
+Formato, codificação e dicionário de dados:
+  [OK]   UTF-8 sem BOM, fim de linha LF, separador ';' e mesmo nº de colunas em todas as linhas
   [OK]   Datas em formato ISO AAAA-MM-DD (fatos)
+  [OK]   Todo CSV está documentado no dicionário
+  [OK]   Dicionário não descreve arquivos inexistentes
+  [OK]   Colunas do dicionário = cabeçalho do CSV (nomes e ordem)
 
 Dimensões (chaves primárias e hierarquias):
   [OK]   dim_calendario: Data única
   [OK]   dim_calendario: 2024-01-01 a 2026-12-31 sem lacunas
+  [OK]   dim_calendario: PeriodoRealizado = 1 somente até a data de corte
   [OK]   dim_loja: CodigoLoja único
-  [OK]   dim_loja: 24 lojas + 1 CORP
+  [OK]   dim_loja: 24 lojas físicas + 1 CORP, sem canais digitais
+  [OK]   dim_canal: CodigoCanal único
+  [OK]   dim_canal: exatamente LOJA_FISICA, SITE_PROPRIO e MERCADO_LIVRE
   [OK]   dim_departamento: CodigoDepartamento único
   [OK]   dim_cenario: CodigoCenario único
   [OK]   dim_plano_contas: CodigoConta único
   [OK]   dim_plano_contas: conta pai existe
+  [OK]   dim_plano_contas: conta filha com nível = nível do pai + 1
   [OK]   dim_categoria: CodigoCategoria único
   [OK]   dim_marca: CodigoMarca único
   [OK]   dim_produto: CodigoProduto único
@@ -37,15 +45,24 @@ Dimensões (chaves primárias e hierarquias):
   [OK]   dim_produto -> dim_marca
   [OK]   dim_produto: preço > custo > 0
 
-fato_vendas_AAAA (itens de cupom):
+fato_vendas_AAAA (itens de venda, três canais):
   [OK]   PK (NumeroVenda, NumeroItem) única
-  [OK]   Produto não se repete no mesmo cupom
+  [OK]   Produto não se repete na mesma venda
+  [OK]   Arquivo do ano contém só vendas daquele ano
   [OK]   DataVenda existe em dim_calendario
-  [OK]   CodigoLoja existe em dim_loja
+  [OK]   CodigoCanal existe em dim_canal
+  [OK]   CodigoLoja existe em dim_loja (vazio só no digital)
   [OK]   CodigoProduto existe em dim_produto
-  [OK]   Cada cupom tem uma única data e loja
+  [OK]   LOJA_FISICA: loja física preenchida e sem pedido externo
+  [OK]   Site e Mercado Livre: sem loja e com pedido externo
   [OK]   Sem vendas na unidade CORP
+  [OK]   NumeroVenda dentro da faixa do canal (sem conflito entre canais)
+  [OK]   NumeroPedidoExterno no formato do canal (SITE-AAAA-NNNNNNN; Mercado Livre 16 dígitos)
+  [OK]   Cada venda tem uma única data, canal, loja e pedido externo
+  [OK]   NumeroPedidoExterno único por canal (um pedido = uma venda)
+  [OK]   Pedido do site com o ano da venda
   [OK]   Sem vendas antes da abertura da loja
+  [OK]   Sem vendas antes do início de operação do canal
   [OK]   Sem vendas após a data de corte do realizado
   [OK]   Produto descontinuado sem venda após a descontinuação
   [OK]   Quantidade, preço e custo unitário positivos
@@ -53,64 +70,122 @@ fato_vendas_AAAA (itens de cupom):
   [OK]   ValorLiquido = ValorBruto - ValorDesconto
   [OK]   CustoTotal = Quantidade x CustoUnitario
   [OK]   Desconto entre 0% e 30% do bruto
+  [OK]   Custo unitário igual em todos os canais no mesmo produto e mês (CMV não depende do canal)
 
 fato_devolucoes:
   [OK]   PK IdDevolucao única
-  [OK]   Cada item devolvido no máximo uma vez
+  [OK]   Cada item devolvido no máximo uma vez (estorno não duplicado)
   [OK]   (NumeroVenda, NumeroItem) existe em fato_vendas
-  [OK]   Loja, produto, quantidade, valores e data coerentes com a venda (e até o corte)
+  [OK]   CodigoCanal existe em dim_canal
+  [OK]   Canal, loja, produto, quantidade, valores e datas coerentes com a venda original (até o corte)
   [OK]   DataDevolucao existe em dim_calendario
 
 fato_despesas (realizado):
-  [OK]   Chave ('IdLancamento',) única
+  [OK]   Chave IdLancamento única (sem duplicação)
   [OK]   DataCompetencia = 1º dia do mês e existe em dim_calendario
   [OK]   AnoMes coerente com DataCompetencia
-  [OK]   CodigoLoja existe em dim_loja
+  [OK]   CodigoCanal existe em dim_canal (vazio só na CORP)
+  [OK]   CodigoLoja existe em dim_loja (vazio só no digital)
   [OK]   CodigoDepartamento existe em dim_departamento
   [OK]   CodigoConta existe e é analítica
-  [OK]   Lojas só usam OPERACOES_LOJA; CORP só usa áreas corporativas
+  [OK]   Combinação válida: loja física/LOJA_FISICA/OPERACOES_LOJA, digital/sem loja/CANAIS_DIGITAIS ou CORP/sem canal/área corporativa (CORP sem rateio)
   [OK]   Valor positivo
   [OK]   Sem lançamento de loja antes do mês de abertura
-  [OK]   Combinação competência + loja + departamento + conta única
-  [OK]   Somente contas alimentadas por despesa (IndicadorDespesa = 1)
+  [OK]   Sem lançamento de canal antes do mês de início de operação
+  [OK]   Comissão de marketplace (5.3.04) só no MERCADO_LIVRE
+  [OK]   Taxa de cartão (5.3.02) não lançada no MERCADO_LIVRE (já incluída na comissão)
+  [OK]   Resultado financeiro e IRPJ/CSLL só na CORP
+  [OK]   CORP sem contas de vendas e CMV (CORP não é canal)
+  [OK]   Competência + canal + loja + departamento + conta única
+  [OK]   Somente contas alimentadas por despesa (sem receita, desconto, devolução ou CMV: custo não duplicado)
   [OK]   Somente meses até a data de corte
-  [OK]   Despesas financeiras e IR só na CORP
+  [OK]   Impostos sobre vendas (3.2.01) em todo mês com venda, por canal e loja, e só nele
 
 fato_orcamento:
-  [OK]   Chave ('CodigoCenario', 'AnoMes', 'CodigoLoja', 'CodigoDepartamento', 'CodigoConta') única
+  [OK]   Chave CodigoCenario + AnoMes + CodigoCanal + CodigoLoja + CodigoDepartamento + CodigoConta única (sem duplicação)
   [OK]   DataCompetencia = 1º dia do mês e existe em dim_calendario
   [OK]   AnoMes coerente com DataCompetencia
-  [OK]   CodigoLoja existe em dim_loja
+  [OK]   CodigoCanal existe em dim_canal (vazio só na CORP)
+  [OK]   CodigoLoja existe em dim_loja (vazio só no digital)
   [OK]   CodigoDepartamento existe em dim_departamento
   [OK]   CodigoConta existe e é analítica
-  [OK]   Lojas só usam OPERACOES_LOJA; CORP só usa áreas corporativas
+  [OK]   Combinação válida: loja física/LOJA_FISICA/OPERACOES_LOJA, digital/sem loja/CANAIS_DIGITAIS ou CORP/sem canal/área corporativa (CORP sem rateio)
   [OK]   Valor positivo
   [OK]   Sem lançamento de loja antes do mês de abertura
+  [OK]   Sem lançamento de canal antes do mês de início de operação
+  [OK]   Comissão de marketplace (5.3.04) só no MERCADO_LIVRE
+  [OK]   Taxa de cartão (5.3.02) não lançada no MERCADO_LIVRE (já incluída na comissão)
+  [OK]   Resultado financeiro e IRPJ/CSLL só na CORP
+  [OK]   CORP sem contas de vendas e CMV (CORP não é canal)
   [OK]   Cenário = ORCAMENTO_APROVADO
   [OK]   36 meses (jan/2024 a dez/2026)
+  [OK]   Cada canal ativo tem receita orçada em todos os meses de operação
 
 fato_forecast:
-  [OK]   Chave ('CodigoCenario', 'AnoMes', 'CodigoLoja', 'CodigoDepartamento', 'CodigoConta') única
+  [OK]   Chave CodigoCenario + AnoMes + CodigoCanal + CodigoLoja + CodigoDepartamento + CodigoConta única (sem duplicação)
   [OK]   DataCompetencia = 1º dia do mês e existe em dim_calendario
   [OK]   AnoMes coerente com DataCompetencia
-  [OK]   CodigoLoja existe em dim_loja
+  [OK]   CodigoCanal existe em dim_canal (vazio só na CORP)
+  [OK]   CodigoLoja existe em dim_loja (vazio só no digital)
   [OK]   CodigoDepartamento existe em dim_departamento
   [OK]   CodigoConta existe e é analítica
-  [OK]   Lojas só usam OPERACOES_LOJA; CORP só usa áreas corporativas
+  [OK]   Combinação válida: loja física/LOJA_FISICA/OPERACOES_LOJA, digital/sem loja/CANAIS_DIGITAIS ou CORP/sem canal/área corporativa (CORP sem rateio)
   [OK]   Valor positivo
   [OK]   Sem lançamento de loja antes do mês de abertura
+  [OK]   Sem lançamento de canal antes do mês de início de operação
+  [OK]   Comissão de marketplace (5.3.04) só no MERCADO_LIVRE
+  [OK]   Taxa de cartão (5.3.02) não lançada no MERCADO_LIVRE (já incluída na comissão)
+  [OK]   Resultado financeiro e IRPJ/CSLL só na CORP
+  [OK]   CORP sem contas de vendas e CMV (CORP não é canal)
   [OK]   Cenário = FORECAST_2026_9P3
   [OK]   Somente meses posteriores ao corte (out-dez/2026)
+  [OK]   Forecast cobre os três canais e a CORP
   [OK]   CodigoCenario existe em dim_cenario
 
-Resumo de conferência (R$ mil, consolidado):
-  Cenário                     Rec. bruta   Rec. líq.  Lucro bruto  Desp. oper.  Res. oper.   Res. líq.
-  Realizado 2024                  26.607       20.657       11.225       10.294          931          476 
-  Orçamento 2024                  27.230       21.157       11.492       10.337        1.156          627 
-  Realizado 2025                  30.187       23.357       12.660       11.333        1.327          730 
-  Orçamento 2025                  30.122       23.403       12.713       11.290        1.423          798 
-  Realizado 2026 (jan-set)        22.973       17.595        9.438        9.109          329           43 
-  Orçamento 2026                  34.778       27.023       14.798       12.418        2.379        1.419 
-  Forecast 2026 (out-dez)         10.060        7.623        4.012        3.384          628          362 
+Separação dos cenários e reconciliação por canal:
+  [OK]   Nenhum fato de realizado em meses de forecast
+  [OK]   Forecast não repete meses do realizado
+  [OK]   Vendas (ValorBruto): soma dos canais (+ CORP) = consolidado em todos os períodos
+  [OK]   Vendas (CustoTotal): soma dos canais (+ CORP) = consolidado em todos os períodos
+  [OK]   Despesas realizadas: soma dos canais (+ CORP) = consolidado em todos os períodos
+  [OK]   Orçamento: soma dos canais (+ CORP) = consolidado em todos os períodos
+  [OK]   Forecast: soma dos canais (+ CORP) = consolidado em todos os períodos
+  [OK]   Receita bruta realizada: soma por canal = soma de todos os itens
 
-Resultado: 72 verificações OK, 0 com erro.
+Comparação com a versão 1.0 (lojas físicas e CORP preservadas):
+  [OK]   Itens das lojas físicas idênticos aos da v1.0
+  [OK]   Devoluções das lojas físicas idênticas às da v1.0
+  [OK]   Despesas das lojas e da CORP idênticos à v1.0 (exceto IRPJ/CSLL, recalculado com o digital)
+  [OK]   Orçamento das lojas e da CORP idênticos à v1.0 (exceto IRPJ/CSLL, recalculado com o digital)
+  [OK]   Forecast das lojas e da CORP idênticos à v1.0 (exceto IRPJ/CSLL, recalculado com o digital)
+
+Resumo de conferência por canal (R$ mil):
+  Cenário / canal                         Rec. bruta   Rec. líq.  Lucro bruto  Desp. oper.  Res. oper.
+  Realizado 2024 LOJA_FISICA                  26.607       20.657       11.225        8.212        3.013 
+  Orçamento 2024 LOJA_FISICA                  27.230       21.157       11.492        8.234        3.258 
+  Realizado 2024 SITE_PROPRIO                  2.598        1.951        1.029          725          305 
+  Orçamento 2024 SITE_PROPRIO                  2.749        2.073        1.095          699          396 
+  Realizado 2024 CORP                              0            0            0        2.082       -2.082 
+  Orçamento 2024 CORP                              0            0            0        2.103       -2.103 
+  Realizado 2025 LOJA_FISICA                  30.187       23.357       12.660        9.100        3.560 
+  Orçamento 2025 LOJA_FISICA                  30.122       23.403       12.713        9.060        3.654 
+  Realizado 2025 SITE_PROPRIO                  3.298        2.472        1.304          878          426 
+  Orçamento 2025 SITE_PROPRIO                  3.407        2.570        1.359          829          530 
+  Realizado 2025 MERCADO_LIVRE                   973          762          432          360           73 
+  Orçamento 2025 MERCADO_LIVRE                 1.282        1.004          571          512           59 
+  Realizado 2025 CORP                              0            0            0        2.233       -2.233 
+  Orçamento 2025 CORP                              0            0            0        2.230       -2.230 
+  Realizado 2026 (jan-set) LOJA_FISICA        22.973       17.595        9.438        7.237        2.201 
+  Orçamento 2026 LOJA_FISICA                  34.778       27.023       14.798        9.915        4.883 
+  Realizado 2026 (jan-set) SITE_PROPRIO        2.735        2.037        1.067          762          305 
+  Orçamento 2026 SITE_PROPRIO                  4.578        3.453        1.841        1.050          791 
+  Realizado 2026 (jan-set) MERCADO_LIVRE       1.648        1.279          727          602          125 
+  Orçamento 2026 MERCADO_LIVRE                 2.917        2.287        1.315        1.110          205 
+  Realizado 2026 (jan-set) CORP                    0            0            0        1.872       -1.872 
+  Orçamento 2026 CORP                              0            0            0        2.504       -2.504 
+  Forecast out-dez/2026 LOJA_FISICA           10.060        7.623        4.012        2.669        1.342 
+  Forecast out-dez/2026 SITE_PROPRIO           1.274          932          474          328          147 
+  Forecast out-dez/2026 MERCADO_LIVRE            782          604          338          279           60 
+  Forecast out-dez/2026 CORP                       0            0            0          715         -715 
+
+Resultado: 123 verificações executadas, 123 passaram, 0 falharam.
