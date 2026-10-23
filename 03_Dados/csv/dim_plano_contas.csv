@@ -20,7 +20,9 @@ CodigoConta;NomeConta;GrupoDRE;NaturezaConta;SinalDRE;IndicadorDespesa;CodigoCon
 5.3;Despesas comerciais e de marketing;Despesas operacionais;DESPESA;-1;0;5;2;430;0;0;1;1;0;
 5.3.01;Marketing e mídia;Despesas operacionais;DESPESA;-1;1;5.3;3;431;0;0;1;1;1;fato_despesas
 5.3.02;Taxas de cartão e meios de pagamento;Despesas operacionais;DESPESA;-1;1;5.3;3;432;0;0;1;1;1;fato_despesas
-5.3.03;Embalagens e materiais de loja;Despesas operacionais;DESPESA;-1;1;5.3;3;433;0;0;1;1;1;fato_despesas
+5.3.03;Embalagens e preparação de pedidos;Despesas operacionais;DESPESA;-1;1;5.3;3;433;0;0;1;1;1;fato_despesas
+5.3.04;Comissões e tarifas de marketplace;Despesas operacionais;DESPESA;-1;1;5.3;3;434;0;0;1;1;1;fato_despesas
+5.3.05;Mídia de performance e anúncios patrocinados;Despesas operacionais;DESPESA;-1;1;5.3;3;435;0;0;1;1;1;fato_despesas
 5.4;Despesas administrativas;Despesas operacionais;DESPESA;-1;0;5;2;440;0;0;1;1;0;
 5.4.01;Tecnologia e sistemas;Despesas operacionais;DESPESA;-1;1;5.4;3;441;0;0;1;1;1;fato_despesas
 5.4.02;Serviços de terceiros;Despesas operacionais;DESPESA;-1;1;5.4;3;442;0;0;1;1;1;fato_despesas
@@ -28,6 +30,8 @@ CodigoConta;NomeConta;GrupoDRE;NaturezaConta;SinalDRE;IndicadorDespesa;CodigoCon
 5.4.04;Despesas gerais;Despesas operacionais;DESPESA;-1;1;5.4;3;444;0;0;1;1;1;fato_despesas
 5.5;Despesas logísticas;Despesas operacionais;DESPESA;-1;0;5;2;450;0;0;1;1;0;
 5.5.01;Fretes e distribuição;Despesas operacionais;DESPESA;-1;1;5.5;3;451;0;0;1;1;1;fato_despesas
+5.5.02;Frete de entrega ao cliente;Despesas operacionais;DESPESA;-1;1;5.5;3;452;0;0;1;1;1;fato_despesas
+5.5.03;Logística reversa de devoluções;Despesas operacionais;DESPESA;-1;1;5.5;3;453;0;0;1;1;1;fato_despesas
 5.6;Depreciação e amortização;Despesas operacionais;DESPESA;-1;0;5;2;460;0;0;1;1;0;
 5.6.01;Depreciação de instalações e equipamentos;Despesas operacionais;DESPESA;-1;1;5.6;3;461;0;0;1;1;1;fato_despesas
 6.1;Resultado financeiro;Resultado financeiro;DESPESA;-1;0;;1;500;0;0;0;1;0;

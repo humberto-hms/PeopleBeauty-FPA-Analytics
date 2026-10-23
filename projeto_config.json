@@ -5,9 +5,9 @@
     "url_repositorio": "https://github.com/humberto-hms/PeopleBeauty_FPA_Analytics_BI",
     "versao_estrutura": "0.1.0",
     "idioma": "pt-BR",
-    "status": "Estrutura criada e dados fictícios gerados; banco e análises não iniciados"
+    "status": "Estrutura criada e dados fictícios omnichannel (v2.0) gerados; banco e análises não iniciados"
   },
-  "objetivo": "Portfólio de FP&A e Business Intelligence para analisar orçamento versus realizado, receita, CMV, margem bruta, despesas operacionais, rentabilidade por loja, forecast financeiro e DRE gerencial, com recomendações executivas.",
+  "objetivo": "Portfólio de FP&A e Business Intelligence para analisar orçamento versus realizado, receita, CMV, margem bruta, despesas operacionais, rentabilidade por canal e por loja, forecast financeiro e DRE gerencial, com recomendações executivas.",
   "empresa": {
     "nome": "People Beauty",
     "segmento": "Varejo de beleza e cuidados pessoais",
@@ -16,8 +16,29 @@
     "unidade_corporativa": {
       "quantidade": 1,
       "codigo_sugerido": "CORP",
-      "descricao": "Unidade administrativa central, responsável pelas despesas corporativas"
-    }
+      "descricao": "Unidade administrativa central, responsável pelas despesas corporativas",
+      "canal_de_vendas": false
+    },
+    "canais_comerciais": [
+      {
+        "codigo": "LOJA_FISICA",
+        "nome": "Lojas físicas",
+        "tipo": "FISICO",
+        "observacao": "24 lojas"
+      },
+      {
+        "codigo": "SITE_PROPRIO",
+        "nome": "Site próprio",
+        "tipo": "DIGITAL_PROPRIO",
+        "observacao": "E-commerce próprio"
+      },
+      {
+        "codigo": "MERCADO_LIVRE",
+        "nome": "Mercado Livre",
+        "tipo": "MARKETPLACE",
+        "observacao": "Marketplace externo, lançado em 2025-04-01 (fictício)"
+      }
+    ]
   },
   "dados": {
     "natureza": "Fictícios",
@@ -39,7 +60,15 @@
       "formato": "CSV UTF-8 sem BOM, separador ;, decimal ., datas AAAA-MM-DD",
       "dicionario": "01_Documentacao/dicionario_de_dados.md",
       "regras": "01_Documentacao/regras_dados_ficticios.md",
-      "pacote_zip": "03_Dados/PeopleBeauty_Dados_Ficticios.zip"
+      "pacote_zip": "03_Dados/PeopleBeauty_Dados_Ficticios.zip",
+      "auditoria": "01_Documentacao/auditoria_omnichannel.md"
+    },
+    "versao_dados": "2.0",
+    "versao_anterior": {
+      "versao": "1.0",
+      "conteudo": "Somente lojas físicas",
+      "arquivo": "03_Dados/versoes/PeopleBeauty_Dados_Ficticios_v1.0.zip",
+      "commit": "638d299"
     }
   },
   "escopo": [
@@ -48,6 +77,7 @@
     "Despesas operacionais",
     "Rentabilidade por loja",
     "Forecast financeiro",
+    "Rentabilidade por canal (lojas físicas, site próprio e Mercado Livre)",
     "DRE gerencial",
     "Recomendações executivas"
   ],

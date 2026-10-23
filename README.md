@@ -1,8 +1,8 @@
 # People Beauty — FP&A Analytics
 
-Projeto de portfólio de **FP&A (Financial Planning & Analysis)** e **Business Intelligence** aplicado a uma rede fictícia de varejo de beleza e cuidados pessoais.
+Projeto de portfólio de **FP&A (Financial Planning & Analysis)** e **Business Intelligence** aplicado a uma rede fictícia e **omnichannel** de varejo de beleza e cuidados pessoais.
 
-> **Status atual:** estrutura do repositório e dados fictícios prontos (`03_Dados/`). O banco de dados, a carga, as análises SQL, o modelo Power BI e os resultados **ainda não foram desenvolvidos**. Tudo o que aparece abaixo como indicador, pergunta ou etapa é **planejamento**, não resultado.
+> **Status atual:** estrutura do repositório e dados fictícios omnichannel (versão 2.0) prontos e validados em `03_Dados/`. O banco de dados, a carga, as análises SQL, o modelo Power BI e os resultados **ainda não foram desenvolvidos**. Tudo o que aparece abaixo como indicador, pergunta ou etapa é **planejamento**, não resultado.
 
 > **Aviso:** a People Beauty é uma empresa fictícia. Todos os dados financeiros e operacionais utilizados neste projeto serão fictícios, criados exclusivamente para fins de estudo e demonstração. Qualquer semelhança com empresas reais é coincidência.
 
@@ -10,9 +10,17 @@ Projeto de portfólio de **FP&A (Financial Planning & Analysis)** e **Business I
 
 ## 1. Apresentação
 
-A **People Beauty** é uma rede de varejo de beleza e cuidados pessoais com **24 lojas** e **1 unidade corporativa** (CORP), responsável pelas despesas administrativas centrais.
+A **People Beauty** é uma rede de varejo de beleza e cuidados pessoais que vende por **três canais comerciais**:
 
-Este projeto simula o trabalho de uma área de FP&A: consolidar orçamento e realizado, explicar desvios, medir a rentabilidade das lojas, projetar o fechamento do ano e transformar números em recomendações para a diretoria.
+| Canal | Código | Descrição |
+|---|---|---|
+| Lojas físicas | `LOJA_FISICA` | 24 lojas em 4 regiões |
+| Site próprio | `SITE_PROPRIO` | e-commerce da marca, expedido pelo centro de distribuição |
+| Mercado Livre | `MERCADO_LIVRE` | marketplace externo, lançado em abril/2025 |
+
+A **unidade corporativa** (`CORP`) concentra as despesas administrativas centrais e **não é canal de vendas**.
+
+Este projeto simula o trabalho de uma área de FP&A em uma operação omnichannel: consolidar orçamento e realizado, explicar desvios, comparar a rentabilidade dos canais e das lojas, medir o custo de vender em marketplace, projetar o fechamento do ano e transformar números em recomendações para a diretoria.
 
 ## 2. Problema de negócio
 
@@ -20,7 +28,8 @@ A diretoria precisa responder, com uma única fonte confiável de dados:
 
 - O resultado do ano está dentro do orçamento? Onde estão os maiores desvios?
 - Os desvios vêm de volume de vendas, de preço/mix, de custo da mercadoria ou de despesas?
-- Quais lojas geram valor e quais consomem resultado?
+- Quais lojas e quais canais geram valor e quais consomem resultado?
+- Vender no Mercado Livre compensa depois de comissões, frete e mídia?
 - Qual é a expectativa de fechamento do ano, considerando o realizado até a data de corte?
 - Que ações devem ser priorizadas para proteger a margem e o resultado operacional?
 
@@ -29,9 +38,9 @@ A diretoria precisa responder, com uma única fonte confiável de dados:
 **Objetivos**
 
 1. Estruturar uma base financeira em SQL Server com orçamento, realizado e forecast.
-2. Construir uma DRE gerencial por loja, região e consolidado.
+2. Construir uma DRE gerencial por canal, loja, região e consolidado.
 3. Analisar orçamento versus realizado com abertura dos desvios.
-4. Avaliar rentabilidade por loja e eficiência das despesas operacionais.
+4. Avaliar rentabilidade por canal e por loja e a eficiência das despesas operacionais.
 5. Elaborar um forecast financeiro para o fechamento do exercício.
 6. Comunicar conclusões em um dashboard Power BI e em recomendações executivas.
 
@@ -43,6 +52,7 @@ A diretoria precisa responder, com uma única fonte confiável de dados:
 | CMV e margem | A margem bruta está sendo preservada? Quais lojas ou categorias pressionam o CMV? |
 | Despesas | Quais grupos de despesa operacional estão acima do orçado? O peso da unidade corporativa é adequado? |
 | Rentabilidade | Quais lojas têm melhor e pior margem de contribuição e resultado operacional? |
+| Canais | Qual a margem de contribuição de cada canal? Quanto pesam comissão, frete, mídia e devoluções no site e no Mercado Livre? O marketplace cresceu como o orçado? |
 | Forecast | Qual é o resultado esperado para o ano e qual o gap em relação ao orçamento? |
 | Decisão | Quais ações concretas devem ser recomendadas à diretoria? |
 
@@ -57,6 +67,10 @@ A diretoria precisa responder, com uma única fonte confiável de dados:
 - Forecast x orçamento (gap de fechamento)
 - Crescimento mês contra mês e ano contra ano
 - Ranking de rentabilidade por loja
+- Participação de cada canal na receita (mix de canais)
+- Margem de contribuição por canal, após custos diretos de comercialização
+- Custo de servir do digital: comissão de marketplace, frete, mídia e logística reversa em % da receita
+- Ticket médio, itens por pedido e taxa de devolução por canal
 
 As definições e fórmulas serão documentadas em `01_Documentacao/` à medida que forem construídas.
 
@@ -78,7 +92,7 @@ As definições e fórmulas serão documentadas em `01_Documentacao/` à medida 
 | 0 | Estrutura do repositório | Pastas, README, configuração e CMD | Concluída |
 | 1 | Documentação e premissas | Escopo, dicionário de dados, plano de contas gerencial | Planejada |
 | 2 | Modelagem no SQL Server | Banco, tabelas, chaves e relacionamentos | Planejada |
-| 3 | Dados fictícios e carga | Base fictícia e rotina de carga | Em andamento (CSVs gerados e validados; carga pendente) |
+| 3 | Dados fictícios e carga | Base fictícia e rotina de carga | Em andamento (CSVs omnichannel v2.0 gerados e validados; carga pendente) |
 | 4 | Análises SQL | Consultas e views de orçamento x realizado, DRE e rentabilidade | Planejada |
 | 5 | Power BI | Modelo, medidas DAX e dashboard | Planejada |
 | 6 | Resultados e recomendações | Conclusões, forecast e recomendações executivas | Planejada |
@@ -95,7 +109,7 @@ PeopleBeauty_FPA_Analytics_BI/
 ├── iniciar_projeto.cmd     Organiza as pastas do ambiente no Windows
 ├── 01_Documentacao/        Escopo, premissas, dicionário de dados e decisões
 ├── 02_SQL_Server/          Scripts de criação do banco, tabelas e carga
-├── 03_Dados/               Dados fictícios (CSVs, gerador, validação e ZIP)
+├── 03_Dados/               Dados fictícios omnichannel (CSVs, gerador, validação, ZIP e versões)
 ├── 04_Analises_SQL/        Consultas analíticas e views
 ├── 05_Power_BI/            Modelo, medidas DAX e dashboard
 └── 06_Resultados/          Conclusões, prints e recomendações executivas
@@ -106,7 +120,7 @@ PeopleBeauty_FPA_Analytics_BI/
 1. Clone o repositório.
 2. No Windows, dê um duplo clique em `iniciar_projeto.cmd` ou execute-o pelo Prompt de Comando a partir da pasta do projeto.
 3. O script apenas confere e cria as pastas que estiverem faltando. Ele não executa SQL, não gera dados e não instala ferramentas.
-4. Os dados fictícios estão em `03_Dados/csv/` (ou no pacote `03_Dados/PeopleBeauty_Dados_Ficticios.zip`). Veja o [dicionário de dados](01_Documentacao/dicionario_de_dados.md).
+4. Os dados fictícios estão em `03_Dados/csv/` (ou no pacote `03_Dados/PeopleBeauty_Dados_Ficticios.zip`). Veja o [dicionário de dados](01_Documentacao/dicionario_de_dados.md), as [regras de geração](01_Documentacao/regras_dados_ficticios.md) e a [auditoria omnichannel](01_Documentacao/auditoria_omnichannel.md). A versão 1.0, só com lojas físicas, está em `03_Dados/versoes/`.
 
 ## 9. Planejamento x resultados
 

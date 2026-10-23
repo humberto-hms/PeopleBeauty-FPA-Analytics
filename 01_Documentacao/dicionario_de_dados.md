@@ -1,6 +1,8 @@
-# Dicionário de dados — CSVs fictícios
+# Dicionário de dados — CSVs fictícios (versão 2.0, omnichannel)
 
-Arquivos em [`03_Dados/csv/`](../03_Dados/csv/). Todos os dados são **fictícios**.
+Arquivos em [`03_Dados/csv/`](../03_Dados/csv/). Todos os dados são **fictícios**: nenhum valor representa estatística real da People Beauty, do Mercado Livre ou de qualquer empresa.
+
+A versão 2.0 acrescenta os canais **site próprio** e **Mercado Livre** à rede de 24 lojas físicas. A versão 1.0 (somente lojas físicas) está preservada; veja a seção [Versões](#versões).
 
 ## Convenções
 
@@ -14,9 +16,22 @@ Arquivos em [`03_Dados/csv/`](../03_Dados/csv/). Todos os dados são **fictício
 | Cabeçalho | primeira linha, nomes em PascalCase sem acento |
 | Fim de linha | LF (`\n`) |
 | Valores monetários | BRL, 2 casas, **sempre positivos**. O sinal na DRE vem de `dim_plano_contas.SinalDRE` |
-| Campos vazios | string vazia (ex.: `CodigoContaPai` de contas de nível 1) |
+| Campos vazios | string vazia = "não se aplica" (ex.: `CodigoLoja` de uma venda do site; `CodigoCanal` de uma despesa da CORP) |
 
 Prefixo `dim_` = arquivo de referência (dimensão); `fato_` = arquivo de fatos.
+
+## Canais, lojas e CORP
+
+| Origem do registro | CodigoCanal | CodigoLoja | CodigoDepartamento |
+|---|---|---|---|
+| Loja física | `LOJA_FISICA` | `L001` … `L024` | `OPERACOES_LOJA` |
+| Site próprio | `SITE_PROPRIO` | vazio | `CANAIS_DIGITAIS` (só nos lançamentos) |
+| Mercado Livre | `MERCADO_LIVRE` | vazio | `CANAIS_DIGITAIS` (só nos lançamentos) |
+| Unidade corporativa | vazio | `CORP` | área corporativa (`DIRETORIA`, `FINANCEIRO` …) |
+
+- Site e Mercado Livre **não** estão em `dim_loja`; são expedidos pelo centro de distribuição, cujos custos já ficam na `CORP` (departamento `LOGISTICA`).
+- A `CORP` não é canal de vendas: não tem vendas, devoluções, receita nem CMV, e suas despesas **não são rateadas** entre canais.
+- Assim, `CodigoLoja` e `CodigoCanal` são chaves estrangeiras **opcionais** (aceitam vazio/NULL). Cada lançamento pertence a exatamente um canal ou à CORP.
 
 ## Mapa de relacionamentos
 
@@ -25,31 +40,33 @@ dim_categoria ─┐
 dim_marca ─────┼── dim_produto ──┐
                │                 ├── fato_vendas_AAAA ── fato_devolucoes
 dim_calendario ┼─────────────────┤   (NumeroVenda, NumeroItem)
-               │                 │
+dim_canal ─────┼─────────────────┤
 dim_loja ──────┼─────────────────┤
 dim_departamento ────────────────┼── fato_despesas
 dim_plano_contas ────────────────┼── fato_orcamento
 dim_cenario ─────────────────────┴── fato_forecast
 ```
 
-| Fato.coluna | Referência |
-|---|---|
-| `fato_vendas_AAAA.DataVenda` | `dim_calendario.Data` |
-| `fato_vendas_AAAA.CodigoLoja` | `dim_loja.CodigoLoja` |
-| `fato_vendas_AAAA.CodigoProduto` | `dim_produto.CodigoProduto` |
-| `fato_devolucoes.(NumeroVenda, NumeroItem)` | `fato_vendas_AAAA.(NumeroVenda, NumeroItem)` |
-| `fato_devolucoes.DataDevolucao` | `dim_calendario.Data` |
-| `fato_devolucoes.CodigoLoja` / `CodigoProduto` | `dim_loja` / `dim_produto` |
-| `fato_despesas`, `fato_orcamento`, `fato_forecast` `.DataCompetencia` | `dim_calendario.Data` |
-| idem `.CodigoLoja` | `dim_loja.CodigoLoja` |
-| idem `.CodigoDepartamento` | `dim_departamento.CodigoDepartamento` |
-| idem `.CodigoConta` | `dim_plano_contas.CodigoConta` (somente contas com `ContaAnalitica = 1`) |
-| `fato_orcamento`, `fato_forecast` `.CodigoCenario` | `dim_cenario.CodigoCenario` |
-| `dim_produto.CodigoCategoria` | `dim_categoria.CodigoCategoria` |
-| `dim_produto.CodigoMarca` | `dim_marca.CodigoMarca` |
-| `dim_plano_contas.CodigoContaPai` | `dim_plano_contas.CodigoConta` |
+| Fato.coluna | Referência | Obrigatória |
+|---|---|---|
+| `fato_vendas_AAAA.DataVenda` | `dim_calendario.Data` | sim |
+| `fato_vendas_AAAA.CodigoCanal` | `dim_canal.CodigoCanal` | sim |
+| `fato_vendas_AAAA.CodigoLoja` | `dim_loja.CodigoLoja` | só em `LOJA_FISICA` |
+| `fato_vendas_AAAA.CodigoProduto` | `dim_produto.CodigoProduto` | sim |
+| `fato_devolucoes.(NumeroVenda, NumeroItem)` | `fato_vendas_AAAA.(NumeroVenda, NumeroItem)` | sim |
+| `fato_devolucoes.DataDevolucao` | `dim_calendario.Data` | sim |
+| `fato_devolucoes.CodigoCanal` / `CodigoLoja` / `CodigoProduto` | `dim_canal` / `dim_loja` / `dim_produto` | como na venda |
+| `fato_despesas`, `fato_orcamento`, `fato_forecast` `.DataCompetencia` | `dim_calendario.Data` | sim |
+| idem `.CodigoCanal` | `dim_canal.CodigoCanal` | vazio só na CORP |
+| idem `.CodigoLoja` | `dim_loja.CodigoLoja` | vazio só no digital |
+| idem `.CodigoDepartamento` | `dim_departamento.CodigoDepartamento` | sim |
+| idem `.CodigoConta` | `dim_plano_contas.CodigoConta` (só `ContaAnalitica = 1`) | sim |
+| `fato_orcamento`, `fato_forecast` `.CodigoCenario` | `dim_cenario.CodigoCenario` | sim |
+| `dim_produto.CodigoCategoria` | `dim_categoria.CodigoCategoria` | sim |
+| `dim_produto.CodigoMarca` | `dim_marca.CodigoMarca` | sim |
+| `dim_plano_contas.CodigoContaPai` | `dim_plano_contas.CodigoConta` | vazio no nível 1 |
 
-Os três arquivos `fato_vendas_2024.csv`, `fato_vendas_2025.csv` e `fato_vendas_2026.csv` formam **uma única tabela lógica**; foram separados por ano apenas para manter cada arquivo abaixo de 50 MB. `NumeroVenda` é sequencial e único entre os três.
+Os três arquivos `fato_vendas_2024.csv`, `fato_vendas_2025.csv` e `fato_vendas_2026.csv` formam **uma única tabela lógica**, separada por ano apenas para reduzir o tamanho de cada arquivo.
 
 ---
 
@@ -77,8 +94,19 @@ Grão: **um dia**, de 2024-01-01 a 2026-12-31 (1.096 linhas). PK: `Data`.
 | FimMes | data | Último dia do mês |
 | PeriodoRealizado | 0/1 | 1 até a data de corte do realizado (2026-09-30) |
 
+### dim_canal.csv
+Grão: **um canal comercial** (3). PK: `CodigoCanal`. Novo na versão 2.0.
+
+| Coluna | Tipo | Descrição |
+|---|---|---|
+| CodigoCanal | texto | `LOJA_FISICA`, `SITE_PROPRIO`, `MERCADO_LIVRE` (códigos estáveis) |
+| NomeCanal | texto | Lojas físicas, Site próprio, Mercado Livre |
+| TipoCanal | texto | `FISICO`, `DIGITAL_PROPRIO` ou `MARKETPLACE` |
+| DataInicioOperacao | data | Início fictício da operação. Mercado Livre: 2025-04-01 |
+| Descricao | texto | Descrição do canal |
+
 ### dim_loja.csv
-Grão: **uma unidade** (24 lojas + CORP). PK: `CodigoLoja`.
+Grão: **uma unidade** (24 lojas + CORP). PK: `CodigoLoja`. Não contém canais digitais.
 
 | Coluna | Tipo | Descrição |
 |---|---|---|
@@ -97,23 +125,25 @@ PK: `CodigoDepartamento`.
 
 | Coluna | Tipo | Descrição |
 |---|---|---|
-| CodigoDepartamento | texto | `OPERACOES_LOJA` (lojas) ou área corporativa |
+| CodigoDepartamento | texto | `OPERACOES_LOJA`, `CANAIS_DIGITAIS` ou área corporativa |
 | NomeDepartamento | texto | Nome |
-| TipoUnidade | texto | `LOJA` ou `CORPORATIVA`: tipo de unidade que pode usar o departamento |
+| TipoUnidade | texto | `LOJA`, `DIGITAL` ou `CORPORATIVA`: onde o departamento pode ser usado |
 
 ### dim_cenario.csv
 PK: `CodigoCenario`.
 
-| CodigoCenario | Uso |
-|---|---|
-| REALIZADO | Rótulo para os fatos de realizado (vendas, devoluções, despesas). Os fatos de realizado **não** têm coluna de cenário |
-| ORCAMENTO_APROVADO | `fato_orcamento`, jan/2024 a dez/2026 |
-| FORECAST_2026_9P3 | `fato_forecast`, somente out-dez/2026 |
+| Coluna | Tipo | Descrição |
+|---|---|---|
+| CodigoCenario | texto | `REALIZADO`, `ORCAMENTO_APROVADO`, `FORECAST_2026_9P3` |
+| NomeCenario | texto | Nome do cenário |
+| TipoCenario | texto | REALIZADO, ORCAMENTO ou FORECAST |
+| StatusCenario | texto | FECHADO, APROVADO ou VIGENTE |
+| Descricao | texto | Período e arquivos do cenário |
 
-Colunas: `CodigoCenario`, `NomeCenario`, `TipoCenario`, `StatusCenario`, `Descricao`.
+`REALIZADO` é um rótulo para os fatos de realizado (vendas, devoluções, despesas), que **não** têm coluna de cenário. `ORCAMENTO_APROVADO` está em `fato_orcamento` (jan/2024 a dez/2026) e `FORECAST_2026_9P3` em `fato_forecast` (só out-dez/2026).
 
 ### dim_plano_contas.csv
-Grão: **uma conta gerencial** (36). PK: `CodigoConta`. Hierarquia em até 3 níveis.
+Grão: **uma conta gerencial** (40). PK: `CodigoConta`. Hierarquia em até 3 níveis.
 
 | Coluna | Tipo | Descrição |
 |---|---|---|
@@ -133,13 +163,24 @@ Grão: **uma conta gerencial** (36). PK: `CodigoConta`. Hierarquia em até 3 ní
 | ContaAnalitica | 0/1 | 1 = recebe lançamentos; 0 = conta sintética (só agrupa) |
 | OrigemRealizado | texto | Arquivo de onde sai o realizado: `fato_vendas`, `fato_devolucoes` ou `fato_despesas` |
 
-Subtotais da DRE (receita líquida, lucro bruto, resultado operacional, resultado líquido) **não são contas**: saem das colunas `Participa*`.
+Contas novas na versão 2.0 (premissa gerencial do projeto, não uma classificação contábil definitiva): **5.3.04** Comissões e tarifas de marketplace, **5.3.05** Mídia de performance e anúncios patrocinados, **5.5.02** Frete de entrega ao cliente, **5.5.03** Logística reversa de devoluções. A conta **5.3.03** passou a se chamar "Embalagens e preparação de pedidos" (mesmo código, cobre lojas e digital). Subtotais da DRE não são contas: saem das colunas `Participa*`.
 
 ### dim_categoria.csv
-PK: `CodigoCategoria` (`CAB`, `SKN`, `MAQ`, `HIG`, `ELE`). Colunas: `CodigoCategoria`, `NomeCategoria`, `Descricao`.
+PK: `CodigoCategoria`.
+
+| Coluna | Tipo | Descrição |
+|---|---|---|
+| CodigoCategoria | texto | `CAB`, `SKN`, `MAQ`, `HIG`, `ELE` |
+| NomeCategoria | texto | Nome da categoria |
+| Descricao | texto | O que a categoria inclui |
 
 ### dim_marca.csv
-PK: `CodigoMarca` (21 marcas). Colunas: `CodigoMarca`, `NomeMarca`.
+PK: `CodigoMarca` (21 marcas).
+
+| Coluna | Tipo | Descrição |
+|---|---|---|
+| CodigoMarca | texto | Nome da marca em maiúsculas, sem acento |
+| NomeMarca | texto | Nome da marca |
 
 ### dim_produto.csv
 Grão: **um produto** (66, sendo 2 inativos). PK: `CodigoProduto`.
@@ -153,82 +194,108 @@ Grão: **um produto** (66, sendo 2 inativos). PK: `CodigoProduto`.
 | CodigoMarca | texto | FK para `dim_marca` |
 | StatusProduto | texto | ATIVO ou INATIVO |
 | DataDescontinuacao | data | Último dia com venda (somente INATIVO) |
-| PrecoListaReferencia2024 | decimal | Preço de venda de 2024 |
+| PrecoListaReferencia2024 | decimal | Preço de venda de 2024 nas lojas e no site |
 | CustoReferencia2024 | decimal | Custo de aquisição médio de 2024 (informativo) |
 
 O preço e o custo efetivamente praticados estão em cada linha de venda.
 
 ### parametros.csv
-| CodigoParametro | Valor |
-|---|---|
-| DATA_CORTE_REALIZADO | 2026-09-30 |
-| SEMENTE_GERADOR | Semente usada pelo gerador |
-| ALIQUOTA_IMPOSTO_VENDA | 0.17 |
-| ALIQUOTA_IRPJ_CSLL | 0.34 |
+
+| Coluna | Tipo | Descrição |
+|---|---|---|
+| CodigoParametro | texto | `DATA_CORTE_REALIZADO`, `SEMENTE_GERADOR`, `ALIQUOTA_IMPOSTO_VENDA`, `ALIQUOTA_IRPJ_CSLL` |
+| Valor | texto | 2026-09-30, semente, 0.17 e 0.34 |
+| Descricao | texto | Significado do parâmetro |
 
 ---
 
 ## Arquivos de fatos
 
 ### fato_vendas_2024.csv, fato_vendas_2025.csv, fato_vendas_2026.csv
-Grão: **um item de cupom** (um produto dentro de uma venda). PK composta: `NumeroVenda` + `NumeroItem`. Um mesmo produto aparece no máximo uma vez por cupom. Período: 2024-01-02 a 2026-09-30.
+Grão: **um item vendido** (um produto dentro de uma venda ou pedido). PK composta: `NumeroVenda` + `NumeroItem`. Um mesmo produto aparece no máximo uma vez por venda. Período: 2024-01-01 a 2026-09-30.
 
 | Coluna | Tipo | Descrição |
 |---|---|---|
-| NumeroVenda | inteiro | Número do cupom, único na rede |
-| NumeroItem | inteiro | Sequência do item no cupom (1, 2, …) |
+| NumeroVenda | inteiro | Identificador interno único da venda. Faixas sem conflito: lojas 1 a 49.999.999; site a partir de 50.000.001; Mercado Livre a partir de 80.000.001 |
+| NumeroItem | inteiro | Sequência do item na venda (1, 2, …) |
 | DataVenda | data | FK `dim_calendario` |
-| CodigoLoja | texto | FK `dim_loja` (nunca `CORP`) |
+| CodigoCanal | texto | FK `dim_canal` |
+| CodigoLoja | texto | FK `dim_loja`; preenchido só em `LOJA_FISICA` (nunca `CORP`) |
+| NumeroPedidoExterno | texto | Vazio nas lojas. Site: `SITE-AAAA-NNNNNNN` (ano da venda + sequência contínua). Mercado Livre: número fictício de 16 dígitos iniciado em 2, único por pedido |
 | CodigoProduto | texto | FK `dim_produto` |
 | Quantidade | inteiro | Unidades vendidas (> 0) |
-| PrecoUnitario | decimal | Preço de tabela do ano |
+| PrecoUnitario | decimal | Preço praticado no canal (Mercado Livre = tabela + 8%) |
 | ValorBruto | decimal | `Quantidade x PrecoUnitario` |
-| ValorDesconto | decimal | Desconto promocional do item (0 a 30% do bruto) |
-| ValorLiquido | decimal | `ValorBruto - ValorDesconto` |
-| CustoUnitario | decimal | Custo médio do produto no mês |
-| CustoTotal | decimal | `Quantidade x CustoUnitario` |
+| ValorDesconto | decimal | Desconto do item (0 a 30% do bruto) |
+| ValorLiquido | decimal | `ValorBruto - ValorDesconto` (receita do item) |
+| CustoUnitario | decimal | Custo médio do produto no mês, igual em todos os canais |
+| CustoTotal | decimal | `Quantidade x CustoUnitario` (CMV do item) |
 
-Contas: `ValorBruto` → 3.1.01; `ValorDesconto` → 3.2.02; `CustoTotal` → 4.1.01.
+Contas: `ValorBruto` → 3.1.01; `ValorDesconto` → 3.2.02; `CustoTotal` → 4.1.01. Comissões, frete e tarifas do marketplace **não** estão aqui: ficam em `fato_despesas`.
 
 ### fato_devolucoes.csv
-Grão: **um item de cupom devolvido**. PK: `IdDevolucao`. Chave única: `NumeroVenda` + `NumeroItem` (FK para a venda).
+Grão: **um item devolvido**. PK: `IdDevolucao`. Chave única: `NumeroVenda` + `NumeroItem` (FK para a venda).
 
 | Coluna | Tipo | Descrição |
 |---|---|---|
 | IdDevolucao | inteiro | Identificador |
-| DataDevolucao | data | Entre 1 e 30 dias depois da venda e até 2026-09-30 |
-| NumeroVenda, NumeroItem | inteiro | Item devolvido |
-| CodigoLoja, CodigoProduto | texto | Iguais aos da venda (facilitam o relacionamento direto) |
+| DataDevolucao | data | Separada da data da venda: 1 a 30 dias depois (3 a 30 no digital) e até 2026-09-30 |
+| NumeroVenda | inteiro | Venda original |
+| NumeroItem | inteiro | Item devolvido |
+| CodigoCanal | texto | Canal da venda original |
+| CodigoLoja | texto | Loja da venda original (vazio no digital) |
+| CodigoProduto | texto | Igual ao da venda |
 | Quantidade | inteiro | Quantidade devolvida (igual à vendida) |
 | ValorDevolvido | decimal | Valor líquido estornado → conta 3.2.03 |
 | CustoDevolvido | decimal | Custo que volta ao estoque → reduz o CMV 4.1.01 |
 
-A devolução entra na competência do mês da `DataDevolucao`.
+A devolução entra na competência do mês da `DataDevolucao`. A venda original continua em `fato_vendas` (a receita não é apagada); o estorno aparece uma única vez aqui.
 
-### fato_despesas.csv (realizado)
-Grão: **um lançamento por competência, unidade, departamento e conta**. PK: `IdLancamento`. Chave única de negócio: `AnoMes` + `CodigoLoja` + `CodigoDepartamento` + `CodigoConta`. Período: jan/2024 a set/2026.
+### fato_despesas.csv
+Realizado. Grão: **um lançamento por competência, canal/unidade, departamento e conta**. PK: `IdLancamento`. Chave única de negócio: `AnoMes` + `CodigoCanal` + `CodigoLoja` + `CodigoDepartamento` + `CodigoConta`. Período: jan/2024 a set/2026.
 
 | Coluna | Tipo | Descrição |
 |---|---|---|
 | IdLancamento | inteiro | Identificador |
 | DataCompetencia | data | 1º dia do mês de competência |
 | AnoMes | inteiro | `AAAAMM` |
-| CodigoLoja | texto | Loja ou `CORP` |
-| CodigoDepartamento | texto | `OPERACOES_LOJA` para lojas; área corporativa para `CORP` |
+| CodigoCanal | texto | Canal do custo; vazio nas despesas da CORP |
+| CodigoLoja | texto | Loja física ou `CORP`; vazio nos custos dos canais digitais |
+| CodigoDepartamento | texto | Veja a tabela [Canais, lojas e CORP](#canais-lojas-e-corp) |
 | CodigoConta | texto | Conta com `IndicadorDespesa = 1` |
 | Valor | decimal | Valor positivo |
 
-Contém impostos sobre vendas (3.2.01), despesas operacionais (5.x), resultado financeiro (6.1.01 receita e 6.1.02 despesa) e IRPJ/CSLL (7.1.01). **Despesas corporativas ficam somente em `CORP`, sem rateio para as lojas.** Resultado financeiro e IR existem só na `CORP`.
+Contém impostos sobre vendas (3.2.01), despesas operacionais (5.x), resultado financeiro (6.1.01 e 6.1.02) e IRPJ/CSLL (7.1.01). Resultado financeiro e IR existem só na `CORP`. Não contém receita, descontos, devoluções nem CMV, que vêm de vendas e devoluções.
 
 ### fato_orcamento.csv
-Grão: **cenário + mês + unidade + departamento + conta**. Chave única: `CodigoCenario` + `AnoMes` + `CodigoLoja` + `CodigoDepartamento` + `CodigoConta`. Cenário `ORCAMENTO_APROVADO`, jan/2024 a dez/2026.
+Grão: **cenário + mês + canal/unidade + departamento + conta**. Chave única: `CodigoCenario` + `AnoMes` + `CodigoCanal` + `CodigoLoja` + `CodigoDepartamento` + `CodigoConta`. Cenário `ORCAMENTO_APROVADO`, jan/2024 a dez/2026.
 
-Colunas: `CodigoCenario`, `DataCompetencia`, `AnoMes`, `CodigoLoja`, `CodigoDepartamento`, `CodigoConta`, `Valor`.
+| Coluna | Tipo | Descrição |
+|---|---|---|
+| CodigoCenario | texto | `ORCAMENTO_APROVADO` |
+| DataCompetencia | data | 1º dia do mês |
+| AnoMes | inteiro | `AAAAMM` |
+| CodigoCanal | texto | Canal; vazio na CORP |
+| CodigoLoja | texto | Loja física ou `CORP`; vazio no digital |
+| CodigoDepartamento | texto | Mesma regra de `fato_despesas` |
+| CodigoConta | texto | Qualquer conta analítica, inclusive vendas (3.1.01, 3.2.02, 3.2.03, 4.1.01) |
+| Valor | decimal | Valor positivo |
 
-Diferente do realizado, o orçamento traz **todas** as contas analíticas no mesmo arquivo, inclusive as de vendas (3.1.01, 3.2.02, 3.2.03, 4.1.01).
+Cada linha pertence a um único canal ou à CORP, então a soma por canal (+ CORP) é o consolidado, sem duplicação.
 
 ### fato_forecast.csv
-Mesmo layout e grão de `fato_orcamento`. Cenário `FORECAST_2026_9P3`, **somente out/2026 a dez/2026**. O forecast do ano 2026 completo = realizado de jan-set/2026 + este arquivo.
+Mesmo grão e regras de `fato_orcamento`. Cenário `FORECAST_2026_9P3`, **somente out/2026 a dez/2026**. O forecast do ano 2026 completo = realizado de jan-set/2026 + este arquivo.
+
+| Coluna | Tipo | Descrição |
+|---|---|---|
+| CodigoCenario | texto | `FORECAST_2026_9P3` |
+| DataCompetencia | data | 1º dia do mês (out, nov ou dez/2026) |
+| AnoMes | inteiro | 202610, 202611 ou 202612 |
+| CodigoCanal | texto | Canal; vazio na CORP |
+| CodigoLoja | texto | Loja física ou `CORP`; vazio no digital |
+| CodigoDepartamento | texto | Mesma regra de `fato_despesas` |
+| CodigoConta | texto | Conta analítica |
+| Valor | decimal | Valor positivo |
 
 ---
 
@@ -242,3 +309,14 @@ Mesmo layout e grão de `fato_orcamento`. Cenário `FORECAST_2026_9P3`, **soment
 | 3.2.03 Devoluções | Σ `fato_devolucoes.ValorDevolvido` | conta 3.2.03 |
 | 4.1.01 CMV | Σ `fato_vendas.CustoTotal` − Σ `fato_devolucoes.CustoDevolvido` | conta 4.1.01 |
 | 5.x, 6.x, 7.x | `fato_despesas` | contas 5.x, 6.x, 7.x |
+
+Todas as linhas podem ser abertas por `CodigoCanal`. A CORP aparece como "sem canal" (corporativo, não alocado).
+
+## Versões
+
+| Versão | Conteúdo | Como recuperar |
+|---|---|---|
+| 1.0 | 24 lojas físicas + CORP, sem canal | `03_Dados/versoes/PeopleBeauty_Dados_Ficticios_v1.0.zip`, ou `git checkout 638d299 -- 03_Dados` |
+| 2.0 | Três canais (lojas, site próprio, Mercado Livre) + CORP | `03_Dados/csv/` e `03_Dados/PeopleBeauty_Dados_Ficticios.zip` |
+
+Na versão 2.0, os registros das lojas físicas e da CORP são idênticos aos da 1.0, exceto pelas colunas novas e pela conta 7.1.01 (IRPJ/CSLL), recalculada com o lucro dos canais digitais. Os `IdLancamento` foram renumerados.

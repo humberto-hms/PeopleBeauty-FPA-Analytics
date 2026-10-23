@@ -1,6 +1,6 @@
 """
 People Beauty - FP&A Analytics
-Gerador de dados fictícios (versão 1.0)
+Gerador de dados fictícios (versão 2.0 — omnichannel)
 
 Gera os arquivos CSV de 03_Dados/csv/ a partir de premissas fixas e de uma
 semente aleatória fixa. Executar de novo produz exatamente os mesmos arquivos.
@@ -12,6 +12,10 @@ Uso (Python 3.9+, somente biblioteca padrão):
 Formato dos arquivos: UTF-8 sem BOM, separador ';', decimal '.', datas
 AAAA-MM-DD, cabeçalho na primeira linha. Valores monetários em BRL, sempre
 positivos; o sinal na DRE vem de dim_plano_contas.SinalDRE.
+
+Versão 2.0: inclui os canais SITE_PROPRIO e MERCADO_LIVRE. As lojas físicas e a
+CORP são geradas exatamente como na versão 1.0 (mesma semente e mesma sequência
+aleatória); os canais digitais usam uma sequência aleatória própria.
 
 Todos os dados são fictícios. Marcas de produtos são referências reais
 permitidas pelo projeto; nomes de lojas, valores e volumes são inventados.
@@ -84,12 +88,23 @@ DEPARTAMENTOS = [
     ("GENTE_GESTAO",   "Gente e Gestão"),
     ("TECNOLOGIA",     "Tecnologia"),
     ("DIRETORIA",      "Diretoria e Administrativo"),
+    ("CANAIS_DIGITAIS", "Canais Digitais (site próprio e marketplace)"),
 ]
 
+# Canais comerciais. A CORP não é canal de vendas.
+# Código, nome, tipo, início da operação, descrição.
+CANAIS = [
+    ("LOJA_FISICA",   "Lojas físicas",  "FISICO",          "2016-03-15", "Vendas presenciais nas 24 lojas da rede."),
+    ("SITE_PROPRIO",  "Site próprio",   "DIGITAL_PROPRIO", "2019-11-04", "E-commerce da People Beauty, expedido pelo centro de distribuição."),
+    ("MERCADO_LIVRE", "Mercado Livre",  "MARKETPLACE",     "2025-04-01", "Loja oficial fictícia no marketplace Mercado Livre, expedida pelo centro de distribuição."),
+]
+CANAIS_DIGITAIS = ["SITE_PROPRIO", "MERCADO_LIVRE"]
+INICIO_CANAL = {c[0]: date.fromisoformat(c[3]) for c in CANAIS}
+
 CENARIOS = [
-    ("REALIZADO",          "Realizado",          "REALIZADO", "FECHADO",  "Realizado de jan/2024 a set/2026: fato_vendas_AAAA, fato_devolucoes e fato_despesas."),
-    ("ORCAMENTO_APROVADO", "Orçamento Aprovado", "ORCAMENTO", "APROVADO", "Orçamento anual aprovado de 2024, 2025 e 2026: fato_orcamento."),
-    ("FORECAST_2026_9P3",  "Forecast 9+3 2026",  "FORECAST",  "VIGENTE",  "Projeção de out-dez/2026 feita na data de corte (fato_forecast). Jan-set/2026 vem do realizado."),
+    ("REALIZADO",          "Realizado",          "REALIZADO", "FECHADO",  "Realizado de jan/2024 a set/2026, três canais: fato_vendas_AAAA, fato_devolucoes e fato_despesas."),
+    ("ORCAMENTO_APROVADO", "Orçamento Aprovado", "ORCAMENTO", "APROVADO", "Orçamento anual aprovado de 2024, 2025 e 2026, por canal: fato_orcamento."),
+    ("FORECAST_2026_9P3",  "Forecast 9+3 2026",  "FORECAST",  "VIGENTE",  "Projeção de out-dez/2026 por canal, feita na data de corte (fato_forecast). Jan-set/2026 vem do realizado."),
 ]
 
 # Código, nome, grupo DRE, natureza, sinal, alimentada por despesa, pai, nível,
@@ -116,7 +131,9 @@ PLANO_CONTAS = [
     ("5.3",    "Despesas comerciais e de marketing",        "Despesas operacionais", "DESPESA", -1, 0, "5",   2, 430, 0, 0, 1, 1),
     ("5.3.01", "Marketing e mídia",                         "Despesas operacionais", "DESPESA", -1, 1, "5.3", 3, 431, 0, 0, 1, 1),
     ("5.3.02", "Taxas de cartão e meios de pagamento",      "Despesas operacionais", "DESPESA", -1, 1, "5.3", 3, 432, 0, 0, 1, 1),
-    ("5.3.03", "Embalagens e materiais de loja",            "Despesas operacionais", "DESPESA", -1, 1, "5.3", 3, 433, 0, 0, 1, 1),
+    ("5.3.03", "Embalagens e preparação de pedidos",        "Despesas operacionais", "DESPESA", -1, 1, "5.3", 3, 433, 0, 0, 1, 1),
+    ("5.3.04", "Comissões e tarifas de marketplace",        "Despesas operacionais", "DESPESA", -1, 1, "5.3", 3, 434, 0, 0, 1, 1),
+    ("5.3.05", "Mídia de performance e anúncios patrocinados", "Despesas operacionais", "DESPESA", -1, 1, "5.3", 3, 435, 0, 0, 1, 1),
     ("5.4",    "Despesas administrativas",                  "Despesas operacionais", "DESPESA", -1, 0, "5",   2, 440, 0, 0, 1, 1),
     ("5.4.01", "Tecnologia e sistemas",                     "Despesas operacionais", "DESPESA", -1, 1, "5.4", 3, 441, 0, 0, 1, 1),
     ("5.4.02", "Serviços de terceiros",                     "Despesas operacionais", "DESPESA", -1, 1, "5.4", 3, 442, 0, 0, 1, 1),
@@ -124,6 +141,8 @@ PLANO_CONTAS = [
     ("5.4.04", "Despesas gerais",                           "Despesas operacionais", "DESPESA", -1, 1, "5.4", 3, 444, 0, 0, 1, 1),
     ("5.5",    "Despesas logísticas",                       "Despesas operacionais", "DESPESA", -1, 0, "5",   2, 450, 0, 0, 1, 1),
     ("5.5.01", "Fretes e distribuição",                     "Despesas operacionais", "DESPESA", -1, 1, "5.5", 3, 451, 0, 0, 1, 1),
+    ("5.5.02", "Frete de entrega ao cliente",               "Despesas operacionais", "DESPESA", -1, 1, "5.5", 3, 452, 0, 0, 1, 1),
+    ("5.5.03", "Logística reversa de devoluções",           "Despesas operacionais", "DESPESA", -1, 1, "5.5", 3, 453, 0, 0, 1, 1),
     ("5.6",    "Depreciação e amortização",                 "Despesas operacionais", "DESPESA", -1, 0, "5",   2, 460, 0, 0, 1, 1),
     ("5.6.01", "Depreciação de instalações e equipamentos", "Despesas operacionais", "DESPESA", -1, 1, "5.6", 3, 461, 0, 0, 1, 1),
     ("6.1",    "Resultado financeiro",                      "Resultado financeiro",  "DESPESA", -1, 0, "",    1, 500, 0, 0, 0, 1),
@@ -298,8 +317,65 @@ ENERGIA_EXTRA_REAL = {202606: 1.14, 202607: 1.16, 202608: 1.18, 202609: 1.15}
 ALUGUEL_REAJ = {2024: 1.000, 2025: 1.045, 2026: 1.045 * 1.050}
 INFLACAO = PRECO_REAL   # reajuste genérico de despesas gerais
 
+# =============================================================================
+# 2b. PREMISSAS DOS CANAIS DIGITAIS (fictícias)
+# =============================================================================
+# Receita bruta de um mês médio na maturidade, em preços de 2024 (R$).
+RECEITA_BASE_CANAL = {"SITE_PROPRIO": 205000.0, "MERCADO_LIVRE": 140000.0}
+# Índice de volume por ano (SITE: base 2024; ML: base maturidade 2025).
+VOLUME_CANAL_REAL = {"SITE_PROPRIO": {2024: 1.00, 2025: 1.17, 2026: 1.33},
+                     "MERCADO_LIVRE": {2024: 0.0, 2025: 1.00, 2026: 1.10}}
+VOLUME_CANAL_ORC = {"SITE_PROPRIO": {2024: 1.03, 2025: 1.20, 2026: 1.45},
+                    "MERCADO_LIVRE": {2024: 0.0, 2025: 1.00, 2026: 1.25}}
+# Lançamento do Mercado Livre: começa com x% do potencial e amadurece em n meses.
+RAMPA_CANAL_REAL = {"MERCADO_LIVRE": (0.25, 10)}
+RAMPA_CANAL_ORC = {"MERCADO_LIVRE": (0.35, 6)}
+# Mix de categorias em relação às lojas (o digital vende mais skincare e eletro).
+MIX_CANAL = {
+    "SITE_PROPRIO":  {"Cabelos": 0.90, "Skincare": 1.40, "Maquiagem": 0.85, "Higiene pessoal": 0.45, "Eletro beleza": 1.50},
+    "MERCADO_LIVRE": {"Cabelos": 0.80, "Skincare": 1.20, "Maquiagem": 0.70, "Higiene pessoal": 0.50, "Eletro beleza": 2.00},
+}
+FATOR_ITEM_BARATO_ML = 0.4          # itens abaixo de R$ 20 vendem pouco no marketplace
+ACRESCIMO_PRECO_ML = 0.08           # preço no marketplace = tabela + 8%, final ,90
+REFORCO_NOV_DIGITAL = 1.15          # Black Friday mais forte no digital
+PESO_DIA_SEMANA_DIGITAL = [1.12, 1.08, 1.04, 1.00, 0.97, 0.86, 0.93]
+# Descontos (cupons no site, campanhas no marketplace).
+PROB_DESCONTO_CANAL = {"SITE_PROPRIO": {2024: 0.28, 2025: 0.28, 2026: 0.33}, "MERCADO_LIVRE": {2024: 0.12, 2025: 0.12, 2026: 0.14}}
+PROB_EXTRA_NOV_CANAL = {"SITE_PROPRIO": 0.25, "MERCADO_LIVRE": 0.10}
+PERCENTUAIS_DESCONTO_CANAL = {"SITE_PROPRIO": PERCENTUAIS_DESCONTO, "MERCADO_LIVRE": [0.05, 0.10, 0.15]}
+DESCONTO_ORC_CANAL = {"SITE_PROPRIO": 0.055, "MERCADO_LIVRE": 0.012}
+DESCONTO_EXTRA_NOV_ORC_CANAL = {"SITE_PROPRIO": 0.045, "MERCADO_LIVRE": 0.010}
+# Itens por pedido: site 1 + exponencial (média ~2,0); marketplace quase sempre 1.
+MEDIA_EXTRA_ITENS_SITE = 1.1
+PROB_SEGUNDO_ITEM_ML = 0.12
+# Devoluções (arrependimento e avarias são mais frequentes no digital).
+DEVOLUCAO_CANAL_REAL = {"SITE_PROPRIO": {"Eletro beleza": 0.050, "_": 0.035},
+                        "MERCADO_LIVRE": {"Eletro beleza": 0.060, "_": 0.045}}
+DEVOLUCAO_CANAL_ORC = {"SITE_PROPRIO": {"Eletro beleza": 0.045, "_": 0.030},
+                       "MERCADO_LIVRE": {"Eletro beleza": 0.050, "_": 0.040}}
+# Custos de comercialização dos canais digitais (realizado x orçamento).
+COMISSAO_ML_REAL = {2025: 0.130, 2026: 0.140}    # % da venda líquida (tarifa reajustada em 2026)
+COMISSAO_ML_ORC = {2025: 0.130, 2026: 0.130}
+TARIFA_FIXA_ML = 6.00                            # por pedido abaixo do mínimo para frete grátis
+MINIMO_FRETE_GRATIS = {"SITE_PROPRIO": 99.0, "MERCADO_LIVRE": 79.0}
+FRETE_PEDIDO = {"SITE_PROPRIO": (17.90, 3.00), "MERCADO_LIVRE": (15.90, 0.00)}   # (frete grátis, pedido abaixo do mínimo)
+FRETE_MEDIO_ORC = {"SITE_PROPRIO": 8.00, "MERCADO_LIVRE": 11.00}
+PERC_PEDIDOS_PEQUENOS_ML_ORC = 0.45
+MIDIA_REAL = {"SITE_PROPRIO": {2024: 0.050, 2025: 0.050, 2026: 0.060}, "MERCADO_LIVRE": {2025: 0.030, 2026: 0.035}}
+MIDIA_ORC = {"SITE_PROPRIO": 0.050, "MERCADO_LIVRE": 0.030}
+GATEWAY_SITE = 0.032                             # o marketplace já desconta a taxa de pagamento na comissão
+EMBALAGEM_PEDIDO = {"SITE_PROPRIO": 3.40, "MERCADO_LIVRE": 2.90}
+REVERSA_DEVOLUCAO = {"SITE_PROPRIO": 18.00, "MERCADO_LIVRE": 21.00}
+PLATAFORMA_FIXA = {"SITE_PROPRIO": 3800.0, "MERCADO_LIVRE": 850.0}
+PLATAFORMA_VARIAVEL_SITE = 0.012
+EQUIPE_CANAL = {"SITE_PROPRIO": 9500.0, "MERCADO_LIVRE": 4200.0}
+# Faixas de numeração interna (NumeroVenda), sem conflito com as lojas (< 50 milhões).
+NUMERO_VENDA_INICIAL = {"SITE_PROPRIO": 50000001, "MERCADO_LIVRE": 80000001}
+
 # Contas cujo valor acompanha a receita (usado no forecast).
-CONTAS_VARIAVEIS = {"3.2.01", "5.1.03", "5.3.01", "5.3.02", "5.3.03", "5.5.01", "6.1.01", "6.1.02"}
+CONTAS_VARIAVEIS = {"3.2.01", "5.1.03", "5.3.01", "5.3.02", "5.3.03", "5.5.01", "6.1.01", "6.1.02",
+                    "5.3.04", "5.3.05", "5.5.02", "5.5.03"}
+CONTAS_VENDAS = ("3.1.01", "3.2.02", "3.2.03", "4.1.01")
 
 
 def arred(v):
@@ -334,6 +410,14 @@ def preco_tabela(preco_2024, ano):
     if p < 10:
         return round(round((p - 0.49) * 2) / 2 + 0.49, 2)
     return round(round(p - 0.90) + 0.90, 2)
+
+
+def preco_canal(preco_2024, ano, canal):
+    """Preço do item no canal: site = tabela da loja; marketplace = tabela + 8%, final ,90."""
+    p = preco_tabela(preco_2024, ano)
+    if canal != "MERCADO_LIVRE":
+        return p
+    return round(round(p * (1 + ACRESCIMO_PRECO_ML) - 0.90) + 0.90, 2)
 
 
 def fator_salarial(dissidio, ano, mes):
@@ -383,9 +467,19 @@ class Gerador:
         self.despesas = []
         self.orcamento = []
         self.forecast = []
-        # Agregados mensais por loja (realizado e orçamento) para despesas e forecast.
+        # Agregados mensais por loja/canal (realizado e orçamento) para despesas e forecast.
         self.agg_real = defaultdict(lambda: defaultdict(float))
         self.agg_orc = defaultdict(lambda: defaultdict(float))
+        # Canais digitais: sequência aleatória própria, para não alterar lojas e CORP.
+        self.rnd_dig = random.Random(semente + 1)
+        self.unid_canal = {}
+        self.giro_canal = {}
+        for canal in CANAIS_DIGITAIS:
+            giro = {p[0]: self.giro[p[0]] * MIX_CANAL[canal][p[2]]
+                    * (FATOR_ITEM_BARATO_ML if canal == "MERCADO_LIVRE" and p[6] < 20 else 1.0) for p in PRODUTOS}
+            self.giro_canal[canal] = giro
+            self.unid_canal[canal] = RECEITA_BASE_CANAL[canal] / sum(
+                giro[p[0]] * p[6] for p in PRODUTOS if p[0] not in DESCONTINUADOS)
 
     # ------------------------------------------------------------------ util
     def ruido(self, sigma):
@@ -451,6 +545,45 @@ class Gerador:
                     w *= 0.5
             if mes == 1 and dia == 1:
                 w = 0.0                           # Confraternização: lojas fechadas
+            pesos.append(w)
+        s = sum(pesos)
+        return [w * dias / s for w in pesos]
+
+    @staticmethod
+    def fracao_canal(canal, d, rampa):
+        """Fração do potencial do canal digital no dia (0 antes do lançamento)."""
+        inicio = INICIO_CANAL[canal]
+        if d < inicio:
+            return 0.0
+        if canal not in rampa:
+            return 1.0
+        ini, n = rampa[canal]
+        meses = (d.year - inicio.year) * 12 + (d.month - inicio.month)
+        return min(1.0, ini + (1 - ini) * meses / n)
+
+    @staticmethod
+    def pesos_dias_digital(ano, mes):
+        """Peso de cada dia no mês para o digital (soma = nº de dias)."""
+        dias = calendar.monthrange(ano, mes)[1]
+        pesos = []
+        for dia in range(1, dias + 1):
+            d = date(ano, mes, dia)
+            w = PESO_DIA_SEMANA_DIGITAL[d.weekday()]
+            if mes == 5:
+                dom2 = [x for x in range(1, 15) if date(ano, 5, x).weekday() == 6][1]
+                if dom2 - 10 <= dia <= dom2 - 3:          # pedidos antecipados para entrega a tempo
+                    w *= 1.6
+            if mes == 11:
+                bf = max(x for x in range(22, 31) if date(ano, 11, x).weekday() == 4)
+                if dia == bf:
+                    w *= 4.5
+                elif bf < dia <= bf + 3:                  # fim de semana e Cyber Monday
+                    w *= 2.0
+            if mes == 12:
+                if 8 <= dia <= 18:
+                    w *= 1.6
+                elif 22 <= dia <= 25:
+                    w *= 0.6
             pesos.append(w)
         s = sum(pesos)
         return [w * dias / s for w in pesos]
@@ -532,6 +665,112 @@ class Gerador:
                                     self.agg_real[(am_dev, cod)]["cmv_dev"] += custo
                         i += tam
 
+    def gerar_vendas_digitais(self):
+        """Pedidos do site próprio e do Mercado Livre (um registro por item)."""
+        rnd = self.rnd_dig
+        id_dev = len(self.devolucoes)
+        for canal in CANAIS_DIGITAIS:
+            num_venda = NUMERO_VENDA_INICIAL[canal] - 1
+            seq_externo = 0
+            giro = self.giro_canal[canal]
+            for ano, mes in meses_periodo():
+                if not realizado(ano, mes):
+                    continue
+                vol = VOLUME_CANAL_REAL[canal][ano]
+                if vol == 0:
+                    continue
+                am = ano * 100 + mes
+                dias = calendar.monthrange(ano, mes)[1]
+                pesos = self.pesos_dias_digital(ano, mes)
+                prob_desc = PROB_DESCONTO_CANAL[canal][ano] + (PROB_EXTRA_NOV_CANAL[canal] if mes == 11 else 0)
+                choque_mes = math.exp(rnd.gauss(0, 0.05))
+                reforco = REFORCO_NOV_DIGITAL if mes == 11 else 1.0
+                base = []
+                for p in PRODUTOS:
+                    if p[0] in DESCONTINUADOS and am > DESCONTINUADOS[p[0]]:
+                        continue
+                    unid = (giro[p[0]] * self.unid_canal[canal] * self.sazonal(p[2], mes) * reforco
+                            * VOLUME_REAL[ano][p[2]] * vol * choque_mes)
+                    base.append((p, unid / self.qtd_media[p[0]] / dias))
+                for dia in range(1, dias + 1):
+                    d = date(ano, mes, dia)
+                    frac = self.fracao_canal(canal, d, RAMPA_CANAL_REAL)
+                    if frac == 0:
+                        continue
+                    choque_dia = math.exp(rnd.gauss(0, 0.12))
+                    linhas = []
+                    for p, lam in base:
+                        linhas.extend([p] * self.poisson_rnd(rnd, lam * pesos[dia - 1] * frac * choque_dia))
+                    rnd.shuffle(linhas)
+                    i = 0
+                    while i < len(linhas):
+                        if canal == "SITE_PROPRIO":
+                            tam = 1 + min(6, int(rnd.expovariate(1 / MEDIA_EXTRA_ITENS_SITE)))
+                        else:
+                            tam = 2 if rnd.random() < PROB_SEGUNDO_ITEM_ML else 1
+                        tam = min(len(linhas) - i, tam)
+                        num_venda += 1
+                        seq_externo += 1
+                        if canal == "SITE_PROPRIO":
+                            externo = f"SITE-{ano}-{seq_externo:07d}"
+                        else:
+                            externo = str(2000010000000000 + seq_externo * 100 + rnd.randint(0, 99))
+                        itens = {}
+                        for p in linhas[i:i + tam]:
+                            qtd = rnd.choices(*self.dist_qtd[p[0]])[0]
+                            if p[0] in itens:
+                                itens[p[0]] += qtd
+                            else:
+                                itens[p[0]] = qtd
+                        bruto_pedido = 0.0
+                        agg = self.agg_real[(am, canal)]
+                        for n_item, (pcod, qtd) in enumerate(itens.items(), start=1):
+                            p_unit = preco_canal(PRODUTOS_IDX[pcod][6], ano, canal)
+                            bruto = round(qtd * p_unit, 2)
+                            pct = rnd.choice(PERCENTUAIS_DESCONTO_CANAL[canal]) if rnd.random() < prob_desc else 0.0
+                            desc = round(bruto * pct, 2)
+                            c_unit = self.custo_mes[(pcod, am)]
+                            custo = round(qtd * c_unit, 2)
+                            liq = round(bruto - desc, 2)
+                            self.vendas.append([num_venda, n_item, d.isoformat(), canal, pcod, qtd, p_unit, bruto, desc,
+                                                liq, c_unit, custo, externo])
+                            bruto_pedido += liq
+                            agg["bruta"] += bruto
+                            agg["desc"] += desc
+                            agg["cmv"] += custo
+                            agg["qtd"] += qtd
+                            taxas = DEVOLUCAO_CANAL_REAL[canal]
+                            if rnd.random() < taxas.get(self.cat[pcod], taxas["_"]):
+                                d_dev = d + timedelta(days=rnd.randint(3, 30))
+                                if d_dev <= DATA_CORTE_REALIZADO:
+                                    id_dev += 1
+                                    self.devolucoes.append([id_dev, d_dev.isoformat(), num_venda, n_item, canal, pcod,
+                                                            qtd, liq, custo])
+                                    agg_dev = self.agg_real[(d_dev.year * 100 + d_dev.month, canal)]
+                                    agg_dev["dev"] += liq
+                                    agg_dev["cmv_dev"] += custo
+                                    agg_dev["n_dev"] += 1
+                        # Frete de entrega pago pela empresa (subsídio de frete grátis).
+                        gratis, parcial = FRETE_PEDIDO[canal]
+                        acima = bruto_pedido >= MINIMO_FRETE_GRATIS[canal]
+                        agg["pedidos"] += 1
+                        agg["frete"] += (gratis if acima else parcial) * INFLACAO[ano] * math.exp(rnd.gauss(0, 0.15))
+                        if not acima:
+                            agg["ped_peq"] += 1
+                        i += tam
+
+    def poisson_rnd(self, rnd, lam):
+        if lam <= 0:
+            return 0
+        if lam > 30:
+            return max(0, int(round(rnd.gauss(lam, math.sqrt(lam)))))
+        limite, k, p = math.exp(-lam), 0, 1.0
+        while True:
+            p *= rnd.random()
+            if p <= limite:
+                return k
+            k += 1
+
     # --------------------------------------------------------- orçamento
     def orcamento_vendas(self):
         """Valores esperados (sem ruído) por loja, mês e conta de vendas."""
@@ -558,6 +797,33 @@ class Gerador:
                     cmv += unid * self.custo_base[p[0]] * CUSTO_ORC[ano][cat] * (1 - tx_dev)
                 agg = self.agg_orc[(am, cod)]
                 agg.update(bruta=bruta, desc=desc, dev=dev, cmv=cmv)
+            # Canais digitais: valores esperados com as premissas do orçamento.
+            for canal in CANAIS_DIGITAIS:
+                vol = VOLUME_CANAL_ORC[canal][ano]
+                dias = calendar.monthrange(ano, mes)[1]
+                frac = sum(self.fracao_canal(canal, date(ano, mes, x), RAMPA_CANAL_ORC) for x in range(1, dias + 1)) / dias
+                if vol == 0 or frac == 0:
+                    continue
+                bruta = desc = dev = cmv = linhas = n_dev = 0.0
+                reforco = REFORCO_NOV_DIGITAL if mes == 11 else 1.0
+                tx_desc = DESCONTO_ORC_CANAL[canal] + (DESCONTO_EXTRA_NOV_ORC_CANAL[canal] if mes == 11 else 0)
+                for p in PRODUTOS:
+                    if p[0] in DESCONTINUADOS and am > DESCONTINUADOS[p[0]]:
+                        continue
+                    cat = p[2]
+                    unid = (self.giro_canal[canal][p[0]] * self.unid_canal[canal] * self.sazonal(cat, mes) * reforco
+                            * VOLUME_ORC[ano][cat] * vol * frac)
+                    b = unid * p[6] * PRECO_ORC[ano] * (1 + (ACRESCIMO_PRECO_ML if canal == "MERCADO_LIVRE" else 0))
+                    tx_dev = DEVOLUCAO_CANAL_ORC[canal].get(cat, DEVOLUCAO_CANAL_ORC[canal]["_"])
+                    bruta += b
+                    desc += b * tx_desc
+                    dev += b * (1 - tx_desc) * tx_dev
+                    cmv += unid * self.custo_base[p[0]] * CUSTO_ORC[ano][cat] * (1 - tx_dev)
+                    linhas += unid / self.qtd_media[p[0]]
+                    n_dev += unid / self.qtd_media[p[0]] * tx_dev
+                itens_pedido = 1 + (MEDIA_EXTRA_ITENS_SITE * 0.9 if canal == "SITE_PROPRIO" else PROB_SEGUNDO_ITEM_ML)
+                self.agg_orc[(am, canal)].update(bruta=bruta, desc=desc, dev=dev, cmv=cmv, n_dev=n_dev,
+                                                 pedidos=linhas / itens_pedido)
 
     # ----------------------------------------------------------- despesas
     def despesas_loja(self, loja, ano, mes, agg, real):
@@ -634,6 +900,32 @@ class Gerador:
         d[("FINANCEIRO", "6.1.02")] = rl_total * (0.0120 if not real or ano < 2026 else 0.0145) * r(0.06)  # antecipação de recebíveis
         return {k: arred(v) for k, v in d.items()}
 
+    def despesas_canal(self, canal, ano, mes, agg, real):
+        """{conta: valor} de um canal digital num mês (custos diretamente atribuíveis)."""
+        rnd = self.rnd_dig
+        r = (lambda s: math.exp(rnd.gauss(0, s))) if real else (lambda s: 1.0)
+        venda_liq = agg["bruta"] - agg["desc"] - agg["dev"]
+        fi = INFLACAO[ano]
+        f_sal = fator_salarial(DISSIDIO_REAL if real else DISSIDIO_ORC, ano, mes)
+        pedidos = agg["pedidos"]
+        d = {
+            "3.2.01": venda_liq * ALIQ_IMPOSTO_VENDA,
+            "5.1.01": EQUIPE_CANAL[canal] * f_sal * r(0.02),
+            "5.1.02": EQUIPE_CANAL[canal] * 0.20 * f_sal * r(0.02),
+            "5.3.03": pedidos * EMBALAGEM_PEDIDO[canal] * fi * r(0.05),
+            "5.3.05": venda_liq * (MIDIA_REAL[canal][ano] if real else MIDIA_ORC[canal]) * r(0.10),
+            "5.4.01": (PLATAFORMA_FIXA[canal] * fi
+                       + (venda_liq * PLATAFORMA_VARIAVEL_SITE if canal == "SITE_PROPRIO" else 0.0)) * r(0.03),
+            "5.5.02": (agg["frete"] if real else pedidos * FRETE_MEDIO_ORC[canal] * fi),
+            "5.5.03": agg["n_dev"] * REVERSA_DEVOLUCAO[canal] * fi * r(0.10),
+        }
+        if canal == "SITE_PROPRIO":
+            d["5.3.02"] = venda_liq * GATEWAY_SITE * r(0.02)
+        else:
+            ped_peq = agg["ped_peq"] if real else pedidos * PERC_PEDIDOS_PEQUENOS_ML_ORC
+            d["5.3.04"] = venda_liq * (COMISSAO_ML_REAL if real else COMISSAO_ML_ORC)[ano] * r(0.01) + ped_peq * TARIFA_FIXA_ML
+        return {k: arred(v) for k, v in d.items() if v > 0}
+
     def gerar_despesas_e_orcamento(self):
         id_lanc = 0
         for ano, mes in meses_periodo():
@@ -664,6 +956,23 @@ class Gerador:
                 for (dep, conta), v in self.despesas_corp(ano, mes, rl_total, real).items():
                     linhas.append(("CORP", dep, conta, v))
                     lucro += v if conta == "6.1.01" else -v
+                # Canais digitais: vendas (só no orçamento) e custos diretos, sem rateio da CORP.
+                for canal in CANAIS_DIGITAIS:
+                    agg = aggs.get((am, canal))
+                    if not agg or agg["bruta"] == 0:
+                        continue
+                    venda_liq = agg["bruta"] - agg["desc"] - agg["dev"]
+                    cmv = agg["cmv"] - agg.get("cmv_dev", 0.0)
+                    lucro += venda_liq * (1 - ALIQ_IMPOSTO_VENDA) - cmv
+                    if not real:
+                        linhas += [(canal, "CANAIS_DIGITAIS", "3.1.01", arred(agg["bruta"])),
+                                   (canal, "CANAIS_DIGITAIS", "3.2.02", arred(agg["desc"])),
+                                   (canal, "CANAIS_DIGITAIS", "3.2.03", arred(agg["dev"])),
+                                   (canal, "CANAIS_DIGITAIS", "4.1.01", arred(cmv))]
+                    for conta, v in self.despesas_canal(canal, ano, mes, agg, real).items():
+                        linhas.append((canal, "CANAIS_DIGITAIS", conta, v))
+                        if conta != "3.2.01":
+                            lucro -= v
                 if lucro > 0:   # IRPJ/CSLL do mês sobre o lucro antes do IR (sem compensação de prejuízo)
                     linhas.append(("CORP", "FINANCEIRO", "7.1.01", arred(lucro * ALIQ_IR_CSLL)))
                 for loja, dep, conta, v in linhas:
@@ -689,11 +998,12 @@ class Gerador:
         real = defaultdict(float)
         for am_l, agg in self.agg_real.items():
             am, loja = am_l
+            dep = "CANAIS_DIGITAIS" if loja in CANAIS_DIGITAIS else "OPERACOES_LOJA"
             if am // 100 == 2026:
-                real[(am, loja, "OPERACOES_LOJA", "3.1.01")] += agg["bruta"]
-                real[(am, loja, "OPERACOES_LOJA", "3.2.02")] += agg["desc"]
-                real[(am, loja, "OPERACOES_LOJA", "3.2.03")] += agg["dev"]
-                real[(am, loja, "OPERACOES_LOJA", "4.1.01")] += agg["cmv"] - agg.get("cmv_dev", 0.0)
+                real[(am, loja, dep, "3.1.01")] += agg["bruta"]
+                real[(am, loja, dep, "3.2.02")] += agg["desc"]
+                real[(am, loja, dep, "3.2.03")] += agg["dev"]
+                real[(am, loja, dep, "4.1.01")] += agg["cmv"] - agg.get("cmv_dev", 0.0)
         for _, _, am, loja, dep, conta, v in self.despesas:
             if am // 100 == 2026:
                 real[(am, loja, dep, conta)] += v
@@ -705,10 +1015,10 @@ class Gerador:
         q3 = [202607, 202608, 202609]
         chaves = sorted({k[1:] for k in orc if k[0] >= 202610})
         fct = {}
-        # 1) Vendas por loja.
+        # 1) Vendas por loja e canal digital.
         rl_loja = defaultdict(float)
         for loja, dep, conta in chaves:
-            if conta not in ("3.1.01", "3.2.02", "3.2.03", "4.1.01"):
+            if conta not in CONTAS_VENDAS:
                 continue
             b_real = soma(real, loja, dep, "3.1.01", ytd)
             b_orc = soma(orc, loja, dep, "3.1.01", ytd)
@@ -724,24 +1034,27 @@ class Gerador:
                     v = bruta * (taxa_real + (taxa_orc_mes - taxa_orc_ytd))   # mantém o efeito Black Friday
                 fct[(am, loja, dep, conta)] = v
         for am in (202610, 202611, 202612):
-            for loja in {k[1] for k in fct}:
-                vl = sum(fct.get((am, loja, "OPERACOES_LOJA", c), 0.0) * s
+            for (_, loja, dep, _) in [k for k in fct if k[0] == am and k[3] == "3.1.01"]:
+                vl = sum(fct.get((am, loja, dep, c), 0.0) * s
                          for c, s in (("3.1.01", 1), ("3.2.02", -1), ("3.2.03", -1)))
                 rl_loja[(am, loja)] = vl * (1 - ALIQ_IMPOSTO_VENDA)
+        # Despesas variáveis da CORP seguem só a receita das lojas, como no realizado.
         rl_total = defaultdict(float)
         for (am, loja), v in rl_loja.items():
-            rl_total[am] += v
+            if loja not in CANAIS_DIGITAIS:
+                rl_total[am] += v
         rl_real_q3 = defaultdict(float)
         for am in q3:
-            for loja in [l[0] for l in self.lojas]:
+            for loja in [l[0] for l in self.lojas] + CANAIS_DIGITAIS:
                 agg = self.agg_real.get((am, loja))
                 if agg:
                     v = (agg["bruta"] - agg["desc"] - agg["dev"]) * (1 - ALIQ_IMPOSTO_VENDA)
                     rl_real_q3[loja] += v
-                    rl_real_q3["CORP"] += v
+                    if loja not in CANAIS_DIGITAIS:
+                        rl_real_q3["CORP"] += v
         # 2) Despesas.
         for loja, dep, conta in chaves:
-            if conta in ("3.1.01", "3.2.02", "3.2.03", "4.1.01", "7.1.01"):
+            if conta in CONTAS_VENDAS or conta == "7.1.01":
                 continue
             for am in (202610, 202611, 202612):
                 if conta == "3.2.01":
@@ -778,6 +1091,19 @@ class Gerador:
 
 
 PRODUTOS_IDX = {p[0]: p for p in PRODUTOS}
+
+
+def canal_e_loja(unidade):
+    """Unidade interna -> (CodigoCanal, CodigoLoja) dos arquivos.
+
+    Loja física: (LOJA_FISICA, Lxxx). Canal digital: (canal, vazio).
+    CORP: (vazio, CORP), pois a unidade corporativa não é canal de vendas.
+    """
+    if unidade in CANAIS_DIGITAIS:
+        return unidade, ""
+    if unidade == "CORP":
+        return "", "CORP"
+    return "LOJA_FISICA", unidade
 
 
 # =============================================================================
@@ -820,6 +1146,7 @@ def main():
     print("Gerando vendas...")
     g = Gerador(args.semente)
     g.gerar_vendas()
+    g.gerar_vendas_digitais()
     print("Gerando orçamento, despesas e forecast...")
     g.orcamento_vendas()
     g.gerar_despesas_e_orcamento()
@@ -836,7 +1163,10 @@ def main():
               "AreaVendaM2"],
              [list(l[:8]) + [l[8] if l[2] == "LOJA" else ""] for l in LOJAS])
     escrever(args.saida, "dim_departamento.csv", ["CodigoDepartamento", "NomeDepartamento", "TipoUnidade"],
-             [[c, n, "LOJA" if c == "OPERACOES_LOJA" else "CORPORATIVA"] for c, n in DEPARTAMENTOS])
+             [[c, n, {"OPERACOES_LOJA": "LOJA", "CANAIS_DIGITAIS": "DIGITAL"}.get(c, "CORPORATIVA")]
+              for c, n in DEPARTAMENTOS])
+    escrever(args.saida, "dim_canal.csv",
+             ["CodigoCanal", "NomeCanal", "TipoCanal", "DataInicioOperacao", "Descricao"], CANAIS)
     escrever(args.saida, "dim_cenario.csv",
              ["CodigoCenario", "NomeCenario", "TipoCenario", "StatusCenario", "Descricao"], CENARIOS)
     escrever(args.saida, "dim_plano_contas.csv",
@@ -864,21 +1194,39 @@ def main():
               ["ALIQUOTA_IMPOSTO_VENDA", str(ALIQ_IMPOSTO_VENDA),
                "Alíquota efetiva sobre (receita bruta - descontos - devoluções), conta 3.2.01."],
               ["ALIQUOTA_IRPJ_CSLL", str(ALIQ_IR_CSLL), "Alíquota de IRPJ + CSLL sobre o lucro mensal positivo, conta 7.1.01."]])
-    cab_vendas = ["NumeroVenda", "NumeroItem", "DataVenda", "CodigoLoja", "CodigoProduto", "Quantidade",
-                  "PrecoUnitario", "ValorBruto", "ValorDesconto", "ValorLiquido", "CustoUnitario", "CustoTotal"]
+    cab_vendas = ["NumeroVenda", "NumeroItem", "DataVenda", "CodigoCanal", "CodigoLoja", "NumeroPedidoExterno",
+                  "CodigoProduto", "Quantidade", "PrecoUnitario", "ValorBruto", "ValorDesconto", "ValorLiquido",
+                  "CustoUnitario", "CustoTotal"]
+
+    def linha_venda(v):
+        canal, loja = canal_e_loja(v[3])
+        return v[:3] + [canal, loja, v[12] if len(v) > 12 else ""] + v[4:12]
+
     for ano in range(ANO_INICIO, ANO_FIM + 1):
-        linhas = [v for v in g.vendas if v[2].startswith(str(ano))]
+        linhas = [linha_venda(v) for v in g.vendas if v[2].startswith(str(ano))]
         if linhas:
             escrever(args.saida, f"fato_vendas_{ano}.csv", cab_vendas, linhas)
     escrever(args.saida, "fato_devolucoes.csv",
-             ["IdDevolucao", "DataDevolucao", "NumeroVenda", "NumeroItem", "CodigoLoja", "CodigoProduto",
-              "Quantidade", "ValorDevolvido", "CustoDevolvido"], g.devolucoes)
-    cab_plan = ["CodigoCenario", "DataCompetencia", "AnoMes", "CodigoLoja", "CodigoDepartamento", "CodigoConta", "Valor"]
+             ["IdDevolucao", "DataDevolucao", "NumeroVenda", "NumeroItem", "CodigoCanal", "CodigoLoja",
+              "CodigoProduto", "Quantidade", "ValorDevolvido", "CustoDevolvido"],
+             [r[:4] + list(canal_e_loja(r[4])) + r[5:] for r in g.devolucoes])
+    cab_plan = ["CodigoCenario", "DataCompetencia", "AnoMes", "CodigoCanal", "CodigoLoja", "CodigoDepartamento",
+                "CodigoConta", "Valor"]
+
+    def com_canal(r, pos):
+        return r[:pos] + list(canal_e_loja(r[pos])) + r[pos + 1:]
+
+    # Ordem: competência, depois lojas físicas, CORP e canais digitais.
+    ordem = {u: i for i, u in enumerate([l[0] for l in LOJAS] + CANAIS_DIGITAIS)}
     escrever(args.saida, "fato_despesas.csv",
-             ["IdLancamento", "DataCompetencia", "AnoMes", "CodigoLoja", "CodigoDepartamento", "CodigoConta", "Valor"],
-             g.despesas)
-    escrever(args.saida, "fato_orcamento.csv", cab_plan, sorted(g.orcamento, key=lambda r: (r[2], r[3], r[4], r[5])))
-    escrever(args.saida, "fato_forecast.csv", cab_plan, sorted(g.forecast, key=lambda r: (r[2], r[3], r[4], r[5])))
+             ["IdLancamento", "DataCompetencia", "AnoMes", "CodigoCanal", "CodigoLoja", "CodigoDepartamento",
+              "CodigoConta", "Valor"],
+             [[i] + com_canal(r[1:], 2) for i, r in enumerate(
+                 sorted(g.despesas, key=lambda r: (r[2], ordem[r[3]], r[4], r[5])), start=1)])
+    escrever(args.saida, "fato_orcamento.csv", cab_plan,
+             [com_canal(r, 3) for r in sorted(g.orcamento, key=lambda r: (r[2], ordem[r[3]], r[4], r[5]))])
+    escrever(args.saida, "fato_forecast.csv", cab_plan,
+             [com_canal(r, 3) for r in sorted(g.forecast, key=lambda r: (r[2], ordem[r[3]], r[4], r[5]))])
 
 
 if __name__ == "__main__":
