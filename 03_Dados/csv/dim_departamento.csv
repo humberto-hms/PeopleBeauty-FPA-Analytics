@@ -1,0 +1,9 @@
+CodigoDepartamento;NomeDepartamento;TipoUnidade
+OPERACOES_LOJA;Operações de Loja;LOJA
+COMERCIAL;Comercial e Compras;CORPORATIVA
+MARKETING;Marketing;CORPORATIVA
+LOGISTICA;Logística e Distribuição;CORPORATIVA
+FINANCEIRO;Financeiro e Controladoria;CORPORATIVA
+GENTE_GESTAO;Gente e Gestão;CORPORATIVA
+TECNOLOGIA;Tecnologia;CORPORATIVA
+DIRETORIA;Diretoria e Administrativo;CORPORATIVA

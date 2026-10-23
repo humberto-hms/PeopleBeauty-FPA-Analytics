@@ -1,0 +1,67 @@
+CodigoProduto;NomeProduto;CodigoCategoria;Subcategoria;CodigoMarca;StatusProduto;DataDescontinuacao;PrecoListaReferencia2024;CustoReferencia2024
+PB-CAB-0001;Elseve Shampoo Reparação Total 400 ml;CAB;Shampoo;ELSEVE;ATIVO;;24.90;8.04
+PB-CAB-0002;Elseve Condicionador Reparação Total 400 ml;CAB;Condicionador;ELSEVE;ATIVO;;26.90;8.86
+PB-CAB-0003;Elseve Máscara Hidratação Intensa 300 g;CAB;Máscara capilar;ELSEVE;ATIVO;;32.90;11.03
+PB-CAB-0004;Elseve Óleo Capilar Nutrição 100 ml;CAB;Finalizador;ELSEVE;ATIVO;;36.90;12.42
+PB-CAB-0005;Pantene Shampoo Liso Extremo 400 ml;CAB;Shampoo;PANTENE;ATIVO;;23.90;8.17
+PB-CAB-0006;Pantene Condicionador Liso Extremo 400 ml;CAB;Condicionador;PANTENE;ATIVO;;25.90;8.63
+PB-CAB-0007;Pantene Ampola de Tratamento 15 ml;CAB;Tratamento;PANTENE;ATIVO;;9.90;3.20
+PB-CAB-0008;Salon Line Creme para Pentear Cachos 300 ml;CAB;Finalizador;SALON_LINE;ATIVO;;19.90;6.78
+PB-CAB-0009;Salon Line Gelatina Modeladora 550 g;CAB;Finalizador;SALON_LINE;ATIVO;;21.90;7.37
+PB-CAB-0010;Salon Line Shampoo Low Poo 300 ml;CAB;Shampoo;SALON_LINE;ATIVO;;18.90;5.99
+PB-CAB-0011;Wella Professionals Shampoo Profissional 250 ml;CAB;Shampoo;WELLA_PROFESSIONALS;ATIVO;;89.90;28.60
+PB-CAB-0012;Wella Professionals Máscara Reconstrução 150 ml;CAB;Máscara capilar;WELLA_PROFESSIONALS;ATIVO;;119.90;40.05
+PB-CAB-0013;Wella Professionals Óleo Reflexo 100 ml;CAB;Finalizador;WELLA_PROFESSIONALS;ATIVO;;139.90;47.78
+PB-CAB-0014;L'Oréal Paris Coloração Permanente Castanho;CAB;Coloração;L_OREAL_PARIS;ATIVO;;34.90;11.84
+PB-CAB-0015;L'Oréal Paris Coloração Permanente Louro Claro;CAB;Coloração;L_OREAL_PARIS;ATIVO;;34.90;11.42
+PB-CAB-0016;Pantene Shampoo Cachos 175 ml;CAB;Shampoo;PANTENE;INATIVO;2025-06-30;14.90;4.80
+PB-SKN-0001;CeraVe Loção Hidratante Facial 52 ml;SKN;Hidratante facial;CERAVE;ATIVO;;79.90;29.42
+PB-SKN-0002;CeraVe Gel de Limpeza Facial 236 ml;SKN;Limpeza facial;CERAVE;ATIVO;;84.90;31.67
+PB-SKN-0003;CeraVe Creme Hidratante Corporal 454 g;SKN;Hidratante corporal;CERAVE;ATIVO;;119.90;43.35
+PB-SKN-0004;La Roche-Posay Protetor Solar Facial FPS 60 40 g;SKN;Protetor solar;LA_ROCHE_POSAY;ATIVO;;89.90;33.28
+PB-SKN-0005;La Roche-Posay Gel de Limpeza Pele Oleosa 150 g;SKN;Limpeza facial;LA_ROCHE_POSAY;ATIVO;;94.90;33.12
+PB-SKN-0006;La Roche-Posay Água Termal 150 ml;SKN;Tratamento facial;LA_ROCHE_POSAY;ATIVO;;69.90;24.31
+PB-SKN-0007;Principia Sérum Niacinamida 30 ml;SKN;Sérum;PRINCIPIA;ATIVO;;49.90;17.31
+PB-SKN-0008;Principia Sérum Vitamina C 30 ml;SKN;Sérum;PRINCIPIA;ATIVO;;59.90;21.22
+PB-SKN-0009;Principia Gel de Limpeza Facial 150 ml;SKN;Limpeza facial;PRINCIPIA;ATIVO;;39.90;14.23
+PB-SKN-0010;Neutrogena Protetor Solar Corporal FPS 50 200 ml;SKN;Protetor solar;NEUTROGENA;ATIVO;;64.90;23.28
+PB-SKN-0011;Neutrogena Hidratante Facial em Gel 50 g;SKN;Hidratante facial;NEUTROGENA;ATIVO;;54.90;19.56
+PB-SKN-0012;Neutrogena Lenço Demaquilante 25 unidades;SKN;Limpeza facial;NEUTROGENA;ATIVO;;24.90;9.12
+PB-SKN-0013;NIVEA Creme Hidratante Facial 100 g;SKN;Hidratante facial;NIVEA;ATIVO;;29.90;10.50
+PB-SKN-0014;NIVEA Protetor Solar FPS 50 200 ml;SKN;Protetor solar;NIVEA;ATIVO;;49.90;18.18
+PB-SKN-0015;L'Oréal Paris Sérum Facial Anti-idade 30 ml;SKN;Sérum;L_OREAL_PARIS;ATIVO;;74.90;27.45
+PB-MAQ-0001;Maybelline Máscara de Cílios à Prova d'Água;MAQ;Olhos;MAYBELLINE;ATIVO;;54.90;15.75
+PB-MAQ-0002;Maybelline Base Líquida Matte 30 ml;MAQ;Rosto;MAYBELLINE;ATIVO;;59.90;16.69
+PB-MAQ-0003;Maybelline Corretivo Líquido 6 ml;MAQ;Rosto;MAYBELLINE;ATIVO;;44.90;13.43
+PB-MAQ-0004;Vult Batom Cremoso;MAQ;Lábios;VULT;ATIVO;;19.90;5.74
+PB-MAQ-0005;Vult Pó Compacto Translúcido;MAQ;Rosto;VULT;ATIVO;;29.90;8.65
+PB-MAQ-0006;Vult Lápis de Olho Preto;MAQ;Olhos;VULT;ATIVO;;14.90;4.29
+PB-MAQ-0007;Ruby Rose Paleta de Sombras 12 cores;MAQ;Olhos;RUBY_ROSE;ATIVO;;39.90;11.35
+PB-MAQ-0008;Ruby Rose Batom Líquido Matte;MAQ;Lábios;RUBY_ROSE;ATIVO;;16.90;4.80
+PB-MAQ-0009;Ruby Rose Kit de Pincéis 5 peças;MAQ;Acessórios;RUBY_ROSE;ATIVO;;34.90;9.94
+PB-MAQ-0010;Boca Rosa Base Líquida 30 ml;MAQ;Rosto;BOCA_ROSA;ATIVO;;69.90;19.99
+PB-MAQ-0011;Boca Rosa Blush Cremoso;MAQ;Rosto;BOCA_ROSA;ATIVO;;49.90;14.93
+PB-MAQ-0012;Boca Rosa Gloss Labial;MAQ;Lábios;BOCA_ROSA;ATIVO;;39.90;11.87
+PB-MAQ-0013;L'Oréal Paris Máscara de Cílios Volume;MAQ;Olhos;L_OREAL_PARIS;ATIVO;;59.90;17.05
+PB-MAQ-0014;Vult Sombra Individual;MAQ;Olhos;VULT;INATIVO;2024-12-31;12.90;3.65
+PB-HIG-0001;Dove Sabonete em Barra 90 g;HIG;Sabonete;DOVE;ATIVO;;4.49;1.85
+PB-HIG-0002;Dove Sabonete Líquido 250 ml;HIG;Sabonete;DOVE;ATIVO;;19.90;7.73
+PB-HIG-0003;Dove Desodorante Aerosol 150 ml;HIG;Desodorante;DOVE;ATIVO;;17.90;7.40
+PB-HIG-0004;Rexona Desodorante Aerosol Masculino 150 ml;HIG;Desodorante;REXONA;ATIVO;;15.90;6.29
+PB-HIG-0005;Rexona Desodorante Roll-on 50 ml;HIG;Desodorante;REXONA;ATIVO;;11.90;4.67
+PB-HIG-0006;NIVEA Desodorante Aerosol 150 ml;HIG;Desodorante;NIVEA;ATIVO;;16.90;6.84
+PB-HIG-0007;NIVEA Loção Hidratante Corporal 400 ml;HIG;Hidratante corporal;NIVEA;ATIVO;;29.90;12.25
+PB-HIG-0008;Granado Sabonete Glicerina 90 g;HIG;Sabonete;GRANADO;ATIVO;;7.90;3.09
+PB-HIG-0009;Granado Talco Antisséptico 100 g;HIG;Cuidados com os pés;GRANADO;ATIVO;;14.90;6.06
+PB-HIG-0010;Granado Água de Colônia 230 ml;HIG;Perfumaria;GRANADO;ATIVO;;49.90;19.56
+PB-HIG-0011;Johnson's Shampoo Infantil 200 ml;HIG;Infantil;JOHNSON_S;ATIVO;;16.90;7.00
+PB-HIG-0012;Johnson's Óleo Corporal Infantil 200 ml;HIG;Infantil;JOHNSON_S;ATIVO;;24.90;10.18
+PB-HIG-0013;Johnson's Sabonete Líquido Infantil 200 ml;HIG;Infantil;JOHNSON_S;ATIVO;;18.90;7.52
+PB-ELE-0001;Taiff Secador de Cabelo 2000 W;ELE;Secador;TAIFF;ATIVO;;299.90;143.81
+PB-ELE-0002;Taiff Prancha Alisadora Cerâmica;ELE;Prancha;TAIFF;ATIVO;;249.90;114.05
+PB-ELE-0003;Taiff Modelador de Cachos;ELE;Modelador;TAIFF;ATIVO;;219.90;100.96
+PB-ELE-0004;Philips Secador de Cabelo Compacto 1600 W;ELE;Secador;PHILIPS;ATIVO;;169.90;78.36
+PB-ELE-0005;Philips Prancha Alisadora Íons;ELE;Prancha;PHILIPS;ATIVO;;199.90;96.68
+PB-ELE-0006;Philips Aparador de Pelos Multifuncional;ELE;Aparador;PHILIPS;ATIVO;;229.90;112.02
+PB-ELE-0007;Britânia Secador de Cabelo 1900 W;ELE;Secador;BRITANIA;ATIVO;;139.90;66.46
+PB-ELE-0008;Britânia Escova Secadora Rotativa;ELE;Escova secadora;BRITANIA;ATIVO;;189.90;92.69

@@ -1,0 +1,116 @@
+Contagem de registros (sem cabeçalho):
+  dim_calendario.csv                    1.096
+  dim_categoria.csv                         5
+  dim_cenario.csv                           3
+  dim_departamento.csv                      8
+  dim_loja.csv                             25
+  dim_marca.csv                            21
+  dim_plano_contas.csv                     36
+  dim_produto.csv                          66
+  fato_despesas.csv                    12.432
+  fato_devolucoes.csv                  16.126
+  fato_forecast.csv                     1.464
+  fato_orcamento.csv                   16.938
+  fato_vendas_2024.csv                492.307
+  fato_vendas_2025.csv                527.882
+  fato_vendas_2026.csv                387.127
+  parametros.csv                            4
+  TOTAL                             1.455.540
+
+Formato e codificação:
+  [OK]   UTF-8 sem BOM, separador ';' e mesmo nº de colunas em todas as linhas
+  [OK]   Datas em formato ISO AAAA-MM-DD (fatos)
+
+Dimensões (chaves primárias e hierarquias):
+  [OK]   dim_calendario: Data única
+  [OK]   dim_calendario: 2024-01-01 a 2026-12-31 sem lacunas
+  [OK]   dim_loja: CodigoLoja único
+  [OK]   dim_loja: 24 lojas + 1 CORP
+  [OK]   dim_departamento: CodigoDepartamento único
+  [OK]   dim_cenario: CodigoCenario único
+  [OK]   dim_plano_contas: CodigoConta único
+  [OK]   dim_plano_contas: conta pai existe
+  [OK]   dim_categoria: CodigoCategoria único
+  [OK]   dim_marca: CodigoMarca único
+  [OK]   dim_produto: CodigoProduto único
+  [OK]   dim_produto -> dim_categoria
+  [OK]   dim_produto -> dim_marca
+  [OK]   dim_produto: preço > custo > 0
+
+fato_vendas_AAAA (itens de cupom):
+  [OK]   PK (NumeroVenda, NumeroItem) única
+  [OK]   Produto não se repete no mesmo cupom
+  [OK]   DataVenda existe em dim_calendario
+  [OK]   CodigoLoja existe em dim_loja
+  [OK]   CodigoProduto existe em dim_produto
+  [OK]   Cada cupom tem uma única data e loja
+  [OK]   Sem vendas na unidade CORP
+  [OK]   Sem vendas antes da abertura da loja
+  [OK]   Sem vendas após a data de corte do realizado
+  [OK]   Produto descontinuado sem venda após a descontinuação
+  [OK]   Quantidade, preço e custo unitário positivos
+  [OK]   ValorBruto = Quantidade x PrecoUnitario
+  [OK]   ValorLiquido = ValorBruto - ValorDesconto
+  [OK]   CustoTotal = Quantidade x CustoUnitario
+  [OK]   Desconto entre 0% e 30% do bruto
+
+fato_devolucoes:
+  [OK]   PK IdDevolucao única
+  [OK]   Cada item devolvido no máximo uma vez
+  [OK]   (NumeroVenda, NumeroItem) existe em fato_vendas
+  [OK]   Loja, produto, quantidade, valores e data coerentes com a venda (e até o corte)
+  [OK]   DataDevolucao existe em dim_calendario
+
+fato_despesas (realizado):
+  [OK]   Chave ('IdLancamento',) única
+  [OK]   DataCompetencia = 1º dia do mês e existe em dim_calendario
+  [OK]   AnoMes coerente com DataCompetencia
+  [OK]   CodigoLoja existe em dim_loja
+  [OK]   CodigoDepartamento existe em dim_departamento
+  [OK]   CodigoConta existe e é analítica
+  [OK]   Lojas só usam OPERACOES_LOJA; CORP só usa áreas corporativas
+  [OK]   Valor positivo
+  [OK]   Sem lançamento de loja antes do mês de abertura
+  [OK]   Combinação competência + loja + departamento + conta única
+  [OK]   Somente contas alimentadas por despesa (IndicadorDespesa = 1)
+  [OK]   Somente meses até a data de corte
+  [OK]   Despesas financeiras e IR só na CORP
+
+fato_orcamento:
+  [OK]   Chave ('CodigoCenario', 'AnoMes', 'CodigoLoja', 'CodigoDepartamento', 'CodigoConta') única
+  [OK]   DataCompetencia = 1º dia do mês e existe em dim_calendario
+  [OK]   AnoMes coerente com DataCompetencia
+  [OK]   CodigoLoja existe em dim_loja
+  [OK]   CodigoDepartamento existe em dim_departamento
+  [OK]   CodigoConta existe e é analítica
+  [OK]   Lojas só usam OPERACOES_LOJA; CORP só usa áreas corporativas
+  [OK]   Valor positivo
+  [OK]   Sem lançamento de loja antes do mês de abertura
+  [OK]   Cenário = ORCAMENTO_APROVADO
+  [OK]   36 meses (jan/2024 a dez/2026)
+
+fato_forecast:
+  [OK]   Chave ('CodigoCenario', 'AnoMes', 'CodigoLoja', 'CodigoDepartamento', 'CodigoConta') única
+  [OK]   DataCompetencia = 1º dia do mês e existe em dim_calendario
+  [OK]   AnoMes coerente com DataCompetencia
+  [OK]   CodigoLoja existe em dim_loja
+  [OK]   CodigoDepartamento existe em dim_departamento
+  [OK]   CodigoConta existe e é analítica
+  [OK]   Lojas só usam OPERACOES_LOJA; CORP só usa áreas corporativas
+  [OK]   Valor positivo
+  [OK]   Sem lançamento de loja antes do mês de abertura
+  [OK]   Cenário = FORECAST_2026_9P3
+  [OK]   Somente meses posteriores ao corte (out-dez/2026)
+  [OK]   CodigoCenario existe em dim_cenario
+
+Resumo de conferência (R$ mil, consolidado):
+  Cenário                     Rec. bruta   Rec. líq.  Lucro bruto  Desp. oper.  Res. oper.   Res. líq.
+  Realizado 2024                  26.607       20.657       11.225       10.294          931          476 
+  Orçamento 2024                  27.230       21.157       11.492       10.337        1.156          627 
+  Realizado 2025                  30.187       23.357       12.660       11.333        1.327          730 
+  Orçamento 2025                  30.122       23.403       12.713       11.290        1.423          798 
+  Realizado 2026 (jan-set)        22.973       17.595        9.438        9.109          329           43 
+  Orçamento 2026                  34.778       27.023       14.798       12.418        2.379        1.419 
+  Forecast 2026 (out-dez)         10.060        7.623        4.012        3.384          628          362 
+
+Resultado: 72 verificações OK, 0 com erro.

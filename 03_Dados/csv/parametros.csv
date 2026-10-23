@@ -1,0 +1,5 @@
+CodigoParametro;Valor;Descricao
+DATA_CORTE_REALIZADO;2026-09-30;Último dia com realizado. Out-dez/2026: somente orçamento e forecast 9+3.
+SEMENTE_GERADOR;20261022;Semente aleatória usada na geração dos dados.
+ALIQUOTA_IMPOSTO_VENDA;0.17;Alíquota efetiva sobre (receita bruta - descontos - devoluções), conta 3.2.01.
+ALIQUOTA_IRPJ_CSLL;0.34;Alíquota de IRPJ + CSLL sobre o lucro mensal positivo, conta 7.1.01.

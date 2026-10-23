@@ -5,7 +5,7 @@
     "url_repositorio": "https://github.com/humberto-hms/PeopleBeauty_FPA_Analytics_BI",
     "versao_estrutura": "0.1.0",
     "idioma": "pt-BR",
-    "status": "Estrutura inicial criada; banco e análises não iniciados"
+    "status": "Estrutura criada e dados fictícios gerados; banco e análises não iniciados"
   },
   "objetivo": "Portfólio de FP&A e Business Intelligence para analisar orçamento versus realizado, receita, CMV, margem bruta, despesas operacionais, rentabilidade por loja, forecast financeiro e DRE gerencial, com recomendações executivas.",
   "empresa": {
@@ -27,8 +27,20 @@
       "fim": "2026-12",
       "granularidade": "Mensal"
     },
-    "cenarios_previstos": ["Orçamento", "Realizado", "Forecast"],
-    "moeda": "BRL"
+    "cenarios_previstos": [
+      "Orçamento",
+      "Realizado",
+      "Forecast"
+    ],
+    "moeda": "BRL",
+    "data_corte_realizado": "2026-09-30",
+    "arquivos": {
+      "pasta": "03_Dados/csv",
+      "formato": "CSV UTF-8 sem BOM, separador ;, decimal ., datas AAAA-MM-DD",
+      "dicionario": "01_Documentacao/dicionario_de_dados.md",
+      "regras": "01_Documentacao/regras_dados_ficticios.md",
+      "pacote_zip": "03_Dados/PeopleBeauty_Dados_Ficticios.zip"
+    }
   },
   "escopo": [
     "Orçamento versus realizado",
@@ -41,11 +53,20 @@
   ],
   "fora_do_escopo_desta_etapa": [
     "Criação do banco de dados e das tabelas",
-    "Geração ou carga de dados fictícios",
     "Consultas analíticas, views e medidas DAX",
-    "Dashboard Power BI e resultados"
+    "Dashboard Power BI e resultados",
+    "Carga dos dados fictícios no banco"
   ],
-  "tecnologias": ["SQL Server", "T-SQL", "Power BI", "DAX", "Excel", "Git", "GitHub", "Windows CMD"],
+  "tecnologias": [
+    "SQL Server",
+    "T-SQL",
+    "Power BI",
+    "DAX",
+    "Excel",
+    "Git",
+    "GitHub",
+    "Windows CMD"
+  ],
   "estrutura_pastas": {
     "01_Documentacao": "Escopo, premissas, dicionário de dados e decisões",
     "02_SQL_Server": "Scripts de criação do banco, tabelas, chaves e carga",
@@ -55,13 +76,41 @@
     "06_Resultados": "Conclusões, prints e recomendações executivas"
   },
   "etapas": [
-    { "numero": 0, "nome": "Estrutura do repositório", "status": "Concluída" },
-    { "numero": 1, "nome": "Documentação e premissas", "status": "Planejada" },
-    { "numero": 2, "nome": "Modelagem no SQL Server", "status": "Planejada" },
-    { "numero": 3, "nome": "Dados fictícios e carga", "status": "Planejada" },
-    { "numero": 4, "nome": "Análises SQL", "status": "Planejada" },
-    { "numero": 5, "nome": "Power BI", "status": "Planejada" },
-    { "numero": 6, "nome": "Resultados e recomendações", "status": "Planejada" }
+    {
+      "numero": 0,
+      "nome": "Estrutura do repositório",
+      "status": "Concluída"
+    },
+    {
+      "numero": 1,
+      "nome": "Documentação e premissas",
+      "status": "Planejada"
+    },
+    {
+      "numero": 2,
+      "nome": "Modelagem no SQL Server",
+      "status": "Planejada"
+    },
+    {
+      "numero": 3,
+      "nome": "Dados fictícios e carga",
+      "status": "Em andamento"
+    },
+    {
+      "numero": 4,
+      "nome": "Análises SQL",
+      "status": "Planejada"
+    },
+    {
+      "numero": 5,
+      "nome": "Power BI",
+      "status": "Planejada"
+    },
+    {
+      "numero": 6,
+      "nome": "Resultados e recomendações",
+      "status": "Planejada"
+    }
   ],
   "responsabilidades": {
     "autor": {
@@ -80,7 +129,8 @@
       "atribuicoes": [
         "Preparar a estrutura inicial do repositório",
         "Redigir os arquivos de orientação (README, configuração e CMD)",
-        "Apoiar com trechos de código pontuais somente quando solicitado"
+        "Apoiar com trechos de código pontuais somente quando solicitado",
+        "Gerar os dados fictícios (CSVs), o gerador reprodutível e o dicionário de dados, a pedido do autor"
       ]
     },
     "implementacao_manual": "A implementação do banco de dados e de todas as análises será feita manualmente pelo autor."
