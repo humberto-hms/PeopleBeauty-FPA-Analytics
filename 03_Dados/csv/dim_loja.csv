@@ -1,0 +1,26 @@
+CodigoLoja;NomeLoja;TipoUnidade;Regiao;UF;Cidade;DataAbertura;Formato;AreaVendaM2
+L001;People Beauty Paulista;LOJA;Sudeste;SP;São Paulo;2016-03-15;Rua;95
+L002;People Beauty Moema;LOJA;Sudeste;SP;São Paulo;2017-05-10;Shopping;85
+L003;People Beauty Tatuapé;LOJA;Sudeste;SP;São Paulo;2018-08-20;Shopping;80
+L004;People Beauty Santo André;LOJA;Sudeste;SP;Santo André;2018-11-05;Shopping;75
+L005;People Beauty Campinas;LOJA;Sudeste;SP;Campinas;2019-02-12;Shopping;75
+L006;People Beauty Ribeirão Preto;LOJA;Sudeste;SP;Ribeirão Preto;2019-06-03;Shopping;70
+L007;People Beauty Sorocaba;LOJA;Sudeste;SP;Sorocaba;2020-09-14;Shopping;65
+L008;People Beauty Copacabana;LOJA;Sudeste;RJ;Rio de Janeiro;2017-10-02;Rua;80
+L009;People Beauty Tijuca;LOJA;Sudeste;RJ;Rio de Janeiro;2019-04-22;Shopping;75
+L010;People Beauty Niterói;LOJA;Sudeste;RJ;Niterói;2020-03-02;Shopping;70
+L011;People Beauty Savassi;LOJA;Sudeste;MG;Belo Horizonte;2018-07-09;Rua;75
+L012;People Beauty Uberlândia;LOJA;Sudeste;MG;Uberlândia;2021-05-17;Shopping;65
+L013;People Beauty Vitória;LOJA;Sudeste;ES;Vitória;2021-08-23;Shopping;70
+L014;People Beauty Batel;LOJA;Sul;PR;Curitiba;2018-04-16;Shopping;80
+L015;People Beauty Londrina;LOJA;Sul;PR;Londrina;2021-10-04;Shopping;65
+L016;People Beauty Moinhos de Vento;LOJA;Sul;RS;Porto Alegre;2019-09-30;Rua;75
+L017;People Beauty Florianópolis;LOJA;Sul;SC;Florianópolis;2020-11-09;Shopping;75
+L018;People Beauty Joinville;LOJA;Sul;SC;Joinville;2022-03-21;Shopping;65
+L019;People Beauty Asa Sul;LOJA;Centro-Oeste;DF;Brasília;2019-12-02;Shopping;75
+L020;People Beauty Goiânia;LOJA;Centro-Oeste;GO;Goiânia;2022-06-13;Shopping;65
+L021;People Beauty Salvador;LOJA;Nordeste;BA;Salvador;2021-02-08;Shopping;75
+L022;People Beauty Recife;LOJA;Nordeste;PE;Recife;2022-09-05;Shopping;70
+L023;People Beauty Fortaleza;LOJA;Nordeste;CE;Fortaleza;2025-03-10;Shopping;75
+L024;People Beauty Campo Grande;LOJA;Centro-Oeste;MS;Campo Grande;2025-08-18;Shopping;70
+CORP;People Beauty Corporativo;CORPORATIVA;Corporativo;SP;São Paulo;2016-01-04;Escritório;

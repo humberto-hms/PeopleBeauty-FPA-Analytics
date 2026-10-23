@@ -1,0 +1,37 @@
+CodigoConta;NomeConta;GrupoDRE;NaturezaConta;SinalDRE;IndicadorDespesa;CodigoContaPai;NivelHierarquia;OrdemExibicao;ParticipaReceitaLiquida;ParticipaCMV;ParticipaResultadoOperacional;ParticipaResultadoLiquido;ContaAnalitica;OrigemRealizado
+3.1;Receita bruta;Receita bruta;RECEITA;1;0;;1;100;1;0;1;1;0;
+3.1.01;Venda de mercadorias;Receita bruta;RECEITA;1;0;3.1;2;110;1;0;1;1;1;fato_vendas
+3.2;Deduções da receita;Deduções;DEDUCAO;-1;0;;1;200;1;0;1;1;0;
+3.2.01;Impostos sobre vendas;Deduções;DEDUCAO;-1;1;3.2;2;210;1;0;1;1;1;fato_despesas
+3.2.02;Descontos concedidos;Deduções;DEDUCAO;-1;0;3.2;2;220;1;0;1;1;1;fato_vendas
+3.2.03;Devoluções de vendas;Deduções;DEDUCAO;-1;0;3.2;2;230;1;0;1;1;1;fato_devolucoes
+4.1;Custo das mercadorias vendidas;CMV;CUSTO;-1;0;;1;300;0;1;1;1;0;
+4.1.01;CMV - mercadorias;CMV;CUSTO;-1;0;4.1;2;310;0;1;1;1;1;fato_vendas
+5;Despesas operacionais;Despesas operacionais;DESPESA;-1;0;;1;400;0;0;1;1;0;
+5.1;Despesas com pessoal;Despesas operacionais;DESPESA;-1;0;5;2;410;0;0;1;1;0;
+5.1.01;Salários e encargos;Despesas operacionais;DESPESA;-1;1;5.1;3;411;0;0;1;1;1;fato_despesas
+5.1.02;Benefícios;Despesas operacionais;DESPESA;-1;1;5.1;3;412;0;0;1;1;1;fato_despesas
+5.1.03;Comissões de vendas;Despesas operacionais;DESPESA;-1;1;5.1;3;413;0;0;1;1;1;fato_despesas
+5.2;Despesas de ocupação;Despesas operacionais;DESPESA;-1;0;5;2;420;0;0;1;1;0;
+5.2.01;Aluguel e condomínio;Despesas operacionais;DESPESA;-1;1;5.2;3;421;0;0;1;1;1;fato_despesas
+5.2.02;Energia elétrica;Despesas operacionais;DESPESA;-1;1;5.2;3;422;0;0;1;1;1;fato_despesas
+5.2.03;Água, gás e telefonia;Despesas operacionais;DESPESA;-1;1;5.2;3;423;0;0;1;1;1;fato_despesas
+5.2.04;Manutenção e conservação;Despesas operacionais;DESPESA;-1;1;5.2;3;424;0;0;1;1;1;fato_despesas
+5.3;Despesas comerciais e de marketing;Despesas operacionais;DESPESA;-1;0;5;2;430;0;0;1;1;0;
+5.3.01;Marketing e mídia;Despesas operacionais;DESPESA;-1;1;5.3;3;431;0;0;1;1;1;fato_despesas
+5.3.02;Taxas de cartão e meios de pagamento;Despesas operacionais;DESPESA;-1;1;5.3;3;432;0;0;1;1;1;fato_despesas
+5.3.03;Embalagens e materiais de loja;Despesas operacionais;DESPESA;-1;1;5.3;3;433;0;0;1;1;1;fato_despesas
+5.4;Despesas administrativas;Despesas operacionais;DESPESA;-1;0;5;2;440;0;0;1;1;0;
+5.4.01;Tecnologia e sistemas;Despesas operacionais;DESPESA;-1;1;5.4;3;441;0;0;1;1;1;fato_despesas
+5.4.02;Serviços de terceiros;Despesas operacionais;DESPESA;-1;1;5.4;3;442;0;0;1;1;1;fato_despesas
+5.4.03;Viagens e deslocamentos;Despesas operacionais;DESPESA;-1;1;5.4;3;443;0;0;1;1;1;fato_despesas
+5.4.04;Despesas gerais;Despesas operacionais;DESPESA;-1;1;5.4;3;444;0;0;1;1;1;fato_despesas
+5.5;Despesas logísticas;Despesas operacionais;DESPESA;-1;0;5;2;450;0;0;1;1;0;
+5.5.01;Fretes e distribuição;Despesas operacionais;DESPESA;-1;1;5.5;3;451;0;0;1;1;1;fato_despesas
+5.6;Depreciação e amortização;Despesas operacionais;DESPESA;-1;0;5;2;460;0;0;1;1;0;
+5.6.01;Depreciação de instalações e equipamentos;Despesas operacionais;DESPESA;-1;1;5.6;3;461;0;0;1;1;1;fato_despesas
+6.1;Resultado financeiro;Resultado financeiro;DESPESA;-1;0;;1;500;0;0;0;1;0;
+6.1.01;Receitas financeiras;Resultado financeiro;RECEITA;1;1;6.1;2;510;0;0;0;1;1;fato_despesas
+6.1.02;Despesas financeiras;Resultado financeiro;DESPESA;-1;1;6.1;2;520;0;0;0;1;1;fato_despesas
+7.1;Impostos sobre o lucro;Impostos sobre lucro;DESPESA;-1;0;;1;600;0;0;0;1;0;
+7.1.01;IRPJ e CSLL;Impostos sobre lucro;DESPESA;-1;1;7.1;2;610;0;0;0;1;1;fato_despesas

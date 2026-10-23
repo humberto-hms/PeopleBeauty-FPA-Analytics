@@ -2,7 +2,7 @@
 
 Projeto de portfólio de **FP&A (Financial Planning & Analysis)** e **Business Intelligence** aplicado a uma rede fictícia de varejo de beleza e cuidados pessoais.
 
-> **Status atual:** estrutura inicial do repositório. O banco de dados, as análises SQL, o modelo Power BI e os resultados **ainda não foram desenvolvidos**. Tudo o que aparece abaixo como indicador, pergunta ou etapa é **planejamento**, não resultado.
+> **Status atual:** estrutura do repositório e dados fictícios prontos (`03_Dados/`). O banco de dados, a carga, as análises SQL, o modelo Power BI e os resultados **ainda não foram desenvolvidos**. Tudo o que aparece abaixo como indicador, pergunta ou etapa é **planejamento**, não resultado.
 
 > **Aviso:** a People Beauty é uma empresa fictícia. Todos os dados financeiros e operacionais utilizados neste projeto serão fictícios, criados exclusivamente para fins de estudo e demonstração. Qualquer semelhança com empresas reais é coincidência.
 
@@ -78,7 +78,7 @@ As definições e fórmulas serão documentadas em `01_Documentacao/` à medida 
 | 0 | Estrutura do repositório | Pastas, README, configuração e CMD | Concluída |
 | 1 | Documentação e premissas | Escopo, dicionário de dados, plano de contas gerencial | Planejada |
 | 2 | Modelagem no SQL Server | Banco, tabelas, chaves e relacionamentos | Planejada |
-| 3 | Dados fictícios e carga | Base fictícia e rotina de carga | Planejada |
+| 3 | Dados fictícios e carga | Base fictícia e rotina de carga | Em andamento (CSVs gerados e validados; carga pendente) |
 | 4 | Análises SQL | Consultas e views de orçamento x realizado, DRE e rentabilidade | Planejada |
 | 5 | Power BI | Modelo, medidas DAX e dashboard | Planejada |
 | 6 | Resultados e recomendações | Conclusões, forecast e recomendações executivas | Planejada |
@@ -95,7 +95,7 @@ PeopleBeauty_FPA_Analytics_BI/
 ├── iniciar_projeto.cmd     Organiza as pastas do ambiente no Windows
 ├── 01_Documentacao/        Escopo, premissas, dicionário de dados e decisões
 ├── 02_SQL_Server/          Scripts de criação do banco, tabelas e carga
-├── 03_Dados/               Dados fictícios de origem (orientações)
+├── 03_Dados/               Dados fictícios (CSVs, gerador, validação e ZIP)
 ├── 04_Analises_SQL/        Consultas analíticas e views
 ├── 05_Power_BI/            Modelo, medidas DAX e dashboard
 └── 06_Resultados/          Conclusões, prints e recomendações executivas
@@ -106,6 +106,7 @@ PeopleBeauty_FPA_Analytics_BI/
 1. Clone o repositório.
 2. No Windows, dê um duplo clique em `iniciar_projeto.cmd` ou execute-o pelo Prompt de Comando a partir da pasta do projeto.
 3. O script apenas confere e cria as pastas que estiverem faltando. Ele não executa SQL, não gera dados e não instala ferramentas.
+4. Os dados fictícios estão em `03_Dados/csv/` (ou no pacote `03_Dados/PeopleBeauty_Dados_Ficticios.zip`). Veja o [dicionário de dados](01_Documentacao/dicionario_de_dados.md).
 
 ## 9. Planejamento x resultados
 

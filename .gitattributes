@@ -3,3 +3,5 @@
 *.bat text eol=crlf
 *.sql text eol=crlf
 *.pbix binary
+*.csv -text
+*.zip binary
